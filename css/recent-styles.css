@@ -1,0 +1,67 @@
+.callout{
+	margin-top: 4px;
+
+}
+
+.panel{
+	text-align: center;
+	padding: 8px;
+	margin-bottom: 4px;
+	background: white;
+}
+
+
+#headline{
+	margin-top: 6px;
+	background: #81078e;
+
+}
+
+#headerPanel{
+	margin-top: 8px;
+	background: transparent;
+	text-align: center;
+	height: 35px;
+	border: 0px;
+}
+
+#headerPanel>h4{
+	margin-top: -10px;
+	color: white;
+}
+
+#leftFeedColumn{
+	margin-top: -15px;
+	padding-left: 6px;
+	padding-right: 2px;
+
+}
+
+#rightFeedColumn{
+	margin-top: -15px;
+	padding-left: 2px;
+	padding-right: 6px;
+
+}
+
+#mainColumn{
+	background: transparent;
+
+}
+
+body{
+	background: #f1f1f1;
+}
+
+#content{
+	padding-top: 0;
+}
+
+.itemTitle{
+	text-align: center;
+}
+
+.button.radius.right{
+	border-width: 1.5px;
+	height: 2.1em;
+}
