@@ -19,19 +19,61 @@
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script>
       $(document).ready(function(){
-        $('form').submit(function(evt){
+
+        $('#logoutForm').submit(function(evt){
           evt.preventDefault();
           var url = $(this).attr("action");
           var formData ='action=logout';
           $.post(url, formData, function(response){
 
-            console.log(response);
-
             $('#logout').html("<p> Logging out... </p>");
             location.href="http://localhost//index.php";
           
+          }); //end post - logout
+        }); //end submit - logout
+
+        $('#addPosts').submit(function(evt){
+          console.log("addPosts event detected!");
+          evt.preventDefault();
+          var url = $(this).attr("action");
+          var formData = $(this).serialize();
+          formData+='&action=newPost';
+          console.log(url);
+          console.log(formData)
+          $.post(url, formData, function(response){
+
+            response=response.substring(1,8);
+
+            if (response=="success") {
+              console.log("Response Successful");
+              $('#addPosts').html("<p> Post Successful</p>");
+            } else{
+              console.log("Response unsuccessful");
+            }
+          });
+        });
+        /*
+        $('#addPosts').submit(function(evt){
+          console.log("addPosts event detected!");
+          evt.preventDefault();
+          var url = $(this).attr("action");
+          var formData = $(this).serialize();
+          formData+='&action=newPost';
+          console.log(formData)
+          $.post(url, formData, function(response){
+              if (response="success") {
+                $(#addPosts).html("<p> Posted! </p>");
+              }
+              else{
+                $(#addPosts).html("<p> Something seems to have gone wrong! Please try again later </p>");
+              }
+            
+          
           }); //end post
         }); //end submit
+
+          */
+
       }); //end ready
 
     </script>
@@ -47,7 +89,7 @@
           <ul class="title-area">
             <li class = "name"> 
               <h1>
-                <a href="#">CLIQUE</a>
+                <a href="#">Clique</a>
               </h1> 
             </li>
             
@@ -59,35 +101,76 @@
     
     
          <section class = "top-bar-section"> 
+
               <ul class = "right">
-                 <li><a href="recent.php">RECENT   <span class="alert round label">2</span></a></li>
+                 <li><a href="recent.php">Recent  <span class="alert round label">2</span></a></li>
                  <li><a href="library.php">Library</a></li>
                  <li class="has-dropdown">
                     <a href="groups.php">Groups </a>
+                    
                     <script>
                       $.getJSON('inc/posts.php',{action:"getGroupList"},function(response){
                         groupListHTML ='';
+                        modalListHTML ='';
                         $.each(response, function(index, group){
                           groupListHTML += '<li><a href="groupLibrary.php?groupName='+group.groupName+'&amp;groupId='+group.groupId+'"> '+group.groupName+'</a></li>';
+                          modalListHTML += '<input type="checkbox" name="group[]" value="'+group.groupId+'"> '+group.groupName+'<br>';
                         });//end each
-                        console.log("MENU HTML:"+groupListHTML);
+
+                        console.log("MODAL HTML:"+modalListHTML);
+                        $('#modalGroups').html(modalListHTML);
                         $('#groupMenu').html(groupListHTML);
                       }); //end getJSON
                     </script>
                     <ul class="dropdown" id='groupMenu'>
                     </ul>
                  </li>
-                 <li><a href="#">DISCOVER</a></li>
+                 <li><a href="#">Discover</a></li>
                </ul>
+
         </section>
-      <a class="button radius right" data-reveal-id="myModal"> Logout </a>
+
+        <a class="button radius right" data-reveal-id="myModal"> Logout </a>
+   
+        
         </nav>
+
+        <a class="button radius left" data-reveal-id="newPostModal"> New Post </a>
     </div>
 
-    <div id="myModal" class="reveal-modal" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <div id="myModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
       <h2 id="modalTitle">Are you sure?</h2>
-      <form orm method="post" action='/inc/userAuth.php' id="logout">
+      <form method="post" action='/inc/userAuth.php' id="logoutForm">
       <input type="submit" value="Yes, Do it">
       </form>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
+
+    <div id="newPostModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <h2 id="newPostTitle">New Post</h2>
+      <form method="post" action='/inc/posts.php' id="addPosts">
+      URL: <input name="url"> <br>
+      <br>
+      <br>
+      Comment:
+      <textarea name="message" rows="6" cols="3">
+      </textarea><br>
+      <fieldset>
+        <legend> Select Groups to Share With:</legend>
+        <input type="checkbox" name="group[]" value="library"> Post to My Library
+        <br>
+          <div id="modalGroups">
+          </div>
+      </fieldset>
+     
+      <input type="submit" value="Post!">
+      </form>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    </div>
+
+
+
+
+
+
+

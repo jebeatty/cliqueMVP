@@ -43,7 +43,6 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
   <!--Footer-->
       <footer id="footer">
           <p> &copy; 2015 Clique </p>
-          <p> Current User: <?php echo $_SESSION['username']; ?></p>
       </footer>
   
   

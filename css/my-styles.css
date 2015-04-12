@@ -14,12 +14,13 @@ nav.top-bar {
 
 section.top-bar-section{
 	display: inline-block;
-	margin-left: -159px;
+	text-align: left;
+	margin-left: -80px;
 }
 
 .top-bar-section li a:not(.button){
 	font-size: 1em;
-	padding: 0 50px 0 50px;
+	padding: 0 30px 0 30px;
 	background: #81078e ;
 	font-family: 'Montserrat', sans-serif;
 	

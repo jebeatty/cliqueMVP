@@ -42,14 +42,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   var mod = index%2;
                   if (mod===1) {
                   column1HTML += '<div class="panel radius">';
-                  column1HTML += '<p class="itemTitle"> Recommended by '+post.poster+'</p>';
+                  column1HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
                   column1HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
                   column1HTML += '<p> Recommendation text from the user who sent it. Check it out! </p>'
                   column1HTML += '<button>Funny</button><button>Interesting</button><button>Inspiring</button> </div>';
                   }
                   else{
                   column2HTML += '<div class="panel radius">';
-                  column2HTML += '<p class="itemTitle"> Recommended by '+post.poster+'</p>';
+                  column2HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
                   column2HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
                   column2HTML += '<p> Recommendation text from the user who sent it. Check it out! </p>'
                   column2HTML += '  <button>Funny</button><button>Interesting</button><button>Inspiring</button> </div>';

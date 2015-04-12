@@ -1,9 +1,5 @@
 <?php
 
-
-
-
-
 session_start();
 if (isset($_SESSION['username'])) {
   $action = $_GET["action"];
@@ -16,12 +12,12 @@ if (isset($_SESSION['username'])) {
 function actionSelector($action){
 
   if ($action=="recent") {
-    getRecent();
+    getRecent($_SESSION['userId']);
   }
-  elseif ($_GET["action"]=="library") {
-    getLibrary();
+  else if ($action=="library") {
+    getLibrary($_SESSION['userId']);
   }
-   else if ($action=="getAllGroupData"){
+  else if ($action=="getAllGroupData"){
     getGroupDataForUser($_SESSION['userId']);
   } 
   else if ($action=="getGroupList"){
@@ -31,7 +27,10 @@ function actionSelector($action){
   else if ($action=="getGroupData"){
     $json = json_encode(getGroupData($_GET['groupId']));
     echo $json;
-
+  }
+  else if($action="newPost"){
+      addNewPost($_POST['group'],$_SESSION['userId'],$_POST['url'],$_POST['message']);
+      
   }
   else {
     $json = json_encode("Action Code Not Recognized");
@@ -40,20 +39,78 @@ function actionSelector($action){
 
 }
 
- 
- //Recent Functions
- function getRecent(){
+
+function addNewPost($groups, $userId, $url, $comment){
+  require_once("../inc/config.php");
+  require(ROOT_PATH."inc/database.php");
+
+  if ($comment=="++++++") {
+    $comment ='';
+  }
+
+  foreach ($groups as $group) {
+    $groupId = $group;
+    if ($groupId=="library") {
+      $groupId="0";
+    }
+
+    try {
+    $results = $db->prepare("INSERT INTO `posts` (`posterName`, `posterId`, `groupId`, `url`, `comment`)
+                              VALUES (?,?,?,?,?)
+                              ");
+    $results->execute(array($_SESSION['username'], $userId, $groupId, $url, $comment));
+
+    } catch(Exception $e){
+        echo "Data loading error!";
+        exit;
+    }
+  
+  } //end each*/
+
+  $json=json_encode("success");
+  echo $json;
+
+}
+
+
+//Recent Functions
+function getRecent($userId){
   
 
   require_once("../inc/config.php");
   require(ROOT_PATH."inc/database.php");
   
+  //get the group list
+  $groups = getGroupListForUser($userId);
+
+  //create an array of groupIds
+  $groupIdList = array();
+  foreach ($groups as $value) {
+    array_push($groupIdList, $value["groupId"]);
+  }
+
+  //create a SQL query with WHERE groupId=? or groupId=?
+  $SQLQuery = "SELECT posterName, groupId, url, postDate FROM posts WHERE ";
+
+  //a For loop that concatenates groupId=? onto the SQL query, with ORs included except for the last iteration of the loop
+
+  for ($i=0; $i < count($groupIdList); $i++) { 
+    $SQLQuery .= "groupId=? ";
+    $remainingLoops = (count($groupIdList)-$i)-1;
+    if ($remainingLoops!==0) {
+      $SQLQuery .= "OR ";
+    }
+  }
+
+   
+  $SQLQuery .= "ORDER BY postId DESC LIMIT 15";
+
+  //prepare $db call
+  //execute with array of groupIds
   try {
-    $results = $db->query("SELECT poster, groupId, url, postDate
-                              FROM posts
-                              ORDER BY postId DESC
-                              LIMIT 15
-                              ");
+    $results = $db->prepare($SQLQuery);
+    $results->execute($groupIdList);
+
     } catch(Exception $e){
         echo "Data loading error!";
         exit;
@@ -67,16 +124,18 @@ function actionSelector($action){
  }
   
 //Library Functions  
-function getLibrary(){
+function getLibrary($userId){
   require_once("../inc/config.php");
   require(ROOT_PATH."inc/database.php");
-  
+
   try {
-    $results = $db->query("SELECT groupId, url, postDate
+    $results = $db->prepare("SELECT groupId, url, postDate
                               FROM posts
+                              WHERE posterId=?
                               ORDER BY postId DESC
-                              LIMIT 15
                               ");
+    $results->execute(array($userId));
+
     } catch(Exception $e){
         echo "Data loading error!";
         exit;
@@ -135,7 +194,7 @@ function getGroupData($groupId){
   require(ROOT_PATH."inc/database.php");
   
   try {
-    $results = $db->prepare("SELECT poster, url, postDate
+    $results = $db->prepare("SELECT posterName, url, postDate
                               FROM posts
                               WHERE groupId=? 
                               ORDER BY postId DESC
