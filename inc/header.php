@@ -28,7 +28,7 @@
             console.log(response);
 
             if (response=="true") {
-              $('#loginForm').html("<p> Login succeeded. Welcome <?php echo $_SESSION['username'] ?> </p>");
+              //$('#loginForm').html("<p> Login succeeded. Welcome <?php echo $_SESSION['username'] ?> </p>");
               location.href="http://localhost//recent.php";
             } else{
               $('#loginForm').html("<p> Login failed. Thanks for trying!</p>");
@@ -47,7 +47,7 @@
             console.log(response);
 
             if (response=="true") {
-              $('#signupForm').html("<p> Signup succeeded! Welcome to Clique, <?php echo $_SESSION['username'] ?> </p>");
+             // $('#signupForm').html("<p> Signup succeeded! Welcome to Clique, <?php echo $_SESSION['username'] ?> </p>");
               location.href="http://localhost//recent.php";
             } else{
               $('#signupForm').html("<p> Signup failed. Please try again later</p>");
@@ -94,6 +94,19 @@
           <input type="submit" value="Login">
         </form>
       </div>
+      OR <br>
+      <?php
+      require_once("vendor/autoload.php");
+      use Facebook\FacebookSession;
+      use Facebook\FacebookRedirectLoginHelper;
+
+      FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
+
+      $helper = new FacebookRedirectLoginHelper('http://localhost/inc/fbLogin.php');
+      $params = array('email','public_profile', 'user_status', 'user_friends');
+      echo '<a href="' . $helper->getLoginUrl($params) . '">Login with Facebook</a>'
+
+      ?>  
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
 

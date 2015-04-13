@@ -2,40 +2,70 @@
 
 // User Authentification Protocols - Login, password recovery, etc.
 // We'll start by taking in posted data on user, then calling the appropriate function
+
+require_once("../vendor/autoload.php");
+use Facebook\FacebookSession;
+use Facebook\FacebookRedirectLoginHelper;
+use Facebook\FacebookRequest;
+use Facebook\FacebookResponse;
+use Facebook\FacebookSDKException;
+use Facebook\FacebookRequestException;
+use Facebook\FacebookAuthorizationException;
+
 session_start();
 $action = $_POST['action'];
 
-$userName=$_POST['username']; 
-$userName=stripcslashes($userName);
-$userName=mysql_real_escape_string($userName);
 
-
-$password=$_POST['password']; 
-$password=stripcslashes($password);
-$password=mysql_real_escape_string($password);
-
-if ($action==="login") {
-	logInUser($userName, $password);
-   
-
-} else if ($action==="signup") {
-	$email=$_POST['email']; 
-	$email=stripcslashes($email);
-	$email=mysql_real_escape_string($email);
-	signUpUser($userName, $password, $email);
-
-} else if ($action==="logout") {
-	session_unset();
-    if(isset($_COOKIE[session_name()])) {
-        setcookie(session_name(),'',time()-3600); # Unset the session id
-    }
-	session_destroy();
-    $json = json_encode("Log out complete");
-    echo $json;
+if ($action=="FBLogin"){
+    FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
+    $helper = new FacebookRedirectLoginHelper('http://www.krizna.com/fbconfig.php' );
+    try {
+        $session = $helper->getSessionFromRedirect();
+        $json = json_encode("Initial FB success");
+        echo $json;
+        } catch( FacebookRequestException $ex ) {
+          // When Facebook returns an error
+        } catch( Exception $ex ) {
+          // When validation fails or other local issues
+        }
+    
 } else{
-	$json = json_encode("Action Code Error");
-	echo $json;
+    $userName=$_POST['username']; 
+    $userName=stripcslashes($userName);
+    $userName=mysql_real_escape_string($userName);
+
+
+    $password=$_POST['password']; 
+    $password=stripcslashes($password);
+    $password=mysql_real_escape_string($password);
+
+    if ($action==="login") {
+        logInUser($userName, $password);
+       
+
+    } else if ($action==="signup") {
+        $email=$_POST['email']; 
+        $email=stripcslashes($email);
+        $email=mysql_real_escape_string($email);
+        signUpUser($userName, $password, $email);
+
+    } else if ($action==="logout") {
+        session_unset();
+        if(isset($_COOKIE[session_name()])) {
+            setcookie(session_name(),'',time()-3600); # Unset the session id
+        }
+        session_destroy();
+        $json = json_encode("Log out complete");
+        echo $json;
+    }  else{
+        $json = json_encode("Action Code Error");
+        echo $json;
+    }
+
+
 }
+
+
 
 
 
