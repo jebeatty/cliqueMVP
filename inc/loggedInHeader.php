@@ -12,11 +12,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link href="css/normalize.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link href="css/foundation.css" rel="stylesheet" media="screen">
     <link href="fonts/foundation-icons.css" rel="stylesheet" media="screen">
     <link href="css/my-styles.css" rel="stylesheet" media="screen">
     <link href=<?php echo CURRENT_PAGE_STYLE ?> rel="stylesheet" media="screen">
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script>
       $(document).ready(function(){
 
@@ -52,6 +54,13 @@
             }
           });
         });
+
+        $("#autocomplete").autocomplete({
+          source: "inc/search.php",
+          minLength: 1,//search after two characters
+         
+        });
+
         /*
         $('#addPosts').submit(function(evt){
           console.log("addPosts event detected!");
@@ -136,6 +145,7 @@
         </nav>
 
         <a class="button radius left" data-reveal-id="newPostModal"> New Post </a>
+        <a class="button radius left" data-reveal-id="newGroupModal"> New Group </a>
     </div>
 
     <div id="myModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
@@ -164,6 +174,45 @@
       </fieldset>
      
       <input type="submit" value="Post!">
+      </form>
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    </div>
+
+    <div id="newGroupModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <h2 id="newGroupTitle">New Group</h2>
+      <form method="post" action='/inc/poss.php' id="addGroup">
+      Group Name: <input name="url"> <br>
+      <br>
+      <br>
+      Group Description:
+      <textarea name="message" rows="6" cols="3">
+      </textarea><br>
+      <fieldset>
+        <legend> Select Friends to Invite:</legend>
+        <div class="ui-widget">
+          <input placeholder="Enter friend's email" id="autocomplete" size="30"><p id="warningArea"></p> <button onclick="addFriendToTable(); return false;"> Add Friend to Group</button>
+          <script>
+          function addFriendToTable(){
+            var friendEmail = $('#autocomplete').val();
+            if (friendEmail.indexOf('@')>0) {
+              $('#warningArea').html('');
+              $('#friendZone').append('<input type="checkbox" name="members[]" value="'+friendEmail+'" checked> '+friendEmail+'<br>');
+            } else{
+              $('#warningArea').html('Invalid Email');
+            }
+
+          }
+          </script>
+        </div>
+        <div>
+          Invited Friends: <br>
+          <ul id="friendZone">
+
+          </ul>
+        </div>
+      </fieldset>
+     
+      <input type="submit" value="Create Group!">
       </form>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
