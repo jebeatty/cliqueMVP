@@ -43,7 +43,6 @@ html,
 body {
 	margin:0;
 	padding:0;
-	height:100%;
 	font-family: 'Montserrat', sans-serif;
 	background: #81078e;
 }
@@ -100,6 +99,18 @@ body {
 	vertical-align: middle;
 }
 
+#facebookLoginArea>a{
+	background: #3b5998;
+	padding: 10 6 10 6;
+	color: white;
+}
+
+#facebookLoginArea>a:visited{
+	background: #3b5998;
+	padding: 10 6 10 6;
+	color: white;
+
+}
 /*Feature Content
 ==========================*/
 
@@ -118,6 +129,8 @@ body {
 	display: block;
 	margin-top: 25px;
 }
+
+
 
 /* Media Query
 ===========================*/

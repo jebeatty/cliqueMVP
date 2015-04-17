@@ -1,0 +1,45 @@
+
+body{
+	background: #f1f1f1;
+}
+
+#content{
+	padding-top: 0;
+}
+
+.panel{
+	text-align: center;
+	padding: 5px;
+	margin-bottom: 4px;
+	background: #81078e; 
+}
+
+.panel>h4{
+	text-align: center;
+	color: white;
+	font-family: 'Montserrat', sans-serif;
+}
+
+.button.radius.right{
+	border-width: 1.5px;
+	height: 2.1em;
+}
+
+#popularContent{
+	margin-top: 30px;
+	margin-bottom: 80px;
+	text-align: center;
+
+}
+
+#popularGroups{
+	margin-top: 30px;
+	margin-bottom: 880px;
+	text-align: center;
+}
+
+#discoveryGroups{
+	margin-bottom: 140px;
+	text-align: center;
+}
+

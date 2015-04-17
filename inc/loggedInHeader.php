@@ -61,27 +61,28 @@
          
         });
 
-        /*
-        $('#addPosts').submit(function(evt){
-          console.log("addPosts event detected!");
+        
+        $('#addGroup').submit(function(evt){
+          console.log("create group event detected!");
           evt.preventDefault();
           var url = $(this).attr("action");
           var formData = $(this).serialize();
-          formData+='&action=newPost';
+          formData+='&action=createGroup';
           console.log(formData)
           $.post(url, formData, function(response){
+             
               if (response="success") {
-                $(#addPosts).html("<p> Posted! </p>");
+                $('#addGroup').html("<p> Posted! </p>");
               }
               else{
-                $(#addPosts).html("<p> Something seems to have gone wrong! Please try again later </p>");
+                $('#addGroup').html("<p> Something seems to have gone wrong! Please try again later </p>");
               }
             
           
           }); //end post
         }); //end submit
 
-          */
+          
 
       }); //end ready
 
@@ -112,7 +113,7 @@
          <section class = "top-bar-section"> 
 
               <ul class = "right">
-                 <li><a href="recent.php">Recent  <span class="alert round label">2</span></a></li>
+                 <li><a href="recent.php">Recent </a></li>
                  <li><a href="library.php">Library</a></li>
                  <li class="has-dropdown">
                     <a href="groups.php">Groups </a>
@@ -134,7 +135,7 @@
                     <ul class="dropdown" id='groupMenu'>
                     </ul>
                  </li>
-                 <li><a href="#">Discover</a></li>
+                 <li><a href="discover.php">Discover</a></li>
                </ul>
 
         </section>
@@ -180,12 +181,12 @@
 
     <div id="newGroupModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
       <h2 id="newGroupTitle">New Group</h2>
-      <form method="post" action='/inc/poss.php' id="addGroup">
-      Group Name: <input name="url"> <br>
+      <form method="post" action='/inc/invites.php' id="addGroup">
+      Group Name: <input name="groupName"> <br>
       <br>
       <br>
       Group Description:
-      <textarea name="message" rows="6" cols="3">
+      <textarea name="groupDesc" rows="6" cols="3">
       </textarea><br>
       <fieldset>
         <legend> Select Friends to Invite:</legend>
@@ -195,12 +196,19 @@
           function addFriendToTable(){
             var friendEmail = $('#autocomplete').val();
             if (friendEmail.indexOf('@')>0) {
-              $('#warningArea').html('');
-              $('#friendZone').append('<input type="checkbox" name="members[]" value="'+friendEmail+'" checked> '+friendEmail+'<br>');
-            } else{
+              var existingFriends = $('#friendZone').html();
+              var newFriend = '<input type="checkbox" name="members[]" value="'+friendEmail;
+              if (existingFriends.indexOf(newFriend)==-1) {
+                $('#warningArea').html('');
+                $('#friendZone').append(newFriend+'" checked> '+friendEmail+'<br>');
+              }
+              else{
+                $('#warningArea').html('Friend already selected');
+              }
+            } 
+            else{
               $('#warningArea').html('Invalid Email');
             }
-
           }
           </script>
         </div>

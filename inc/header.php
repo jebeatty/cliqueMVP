@@ -95,18 +95,21 @@
         </form>
       </div>
       OR <br>
-      <?php
-      require_once("vendor/autoload.php");
-      use Facebook\FacebookSession;
-      use Facebook\FacebookRedirectLoginHelper;
+      <br>
+      <div id="facebookLoginArea">
+        <?php
+        require_once("vendor/autoload.php");
+        use Facebook\FacebookSession;
+        use Facebook\FacebookRedirectLoginHelper;
 
-      FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
+        FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
 
-      $helper = new FacebookRedirectLoginHelper('http://localhost/inc/fbLogin.php');
-      $params = array('email','public_profile', 'user_status', 'user_friends');
-      echo '<a href="' . $helper->getLoginUrl($params) . '">Login with Facebook</a>'
+        $helper = new FacebookRedirectLoginHelper('http://localhost/inc/fbLogin.php');
+        $params = array('email','public_profile', 'user_status', 'user_friends');
+        echo '<a href="' . $helper->getLoginUrl($params) . '">Login with Facebook</a>'
 
-      ?>  
+        ?>  
+      </div>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
 

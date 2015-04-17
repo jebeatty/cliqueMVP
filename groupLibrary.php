@@ -8,6 +8,8 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
     
 
     <!--Feature Content-->
+    <a class="button radius left" data-reveal-id=""> Invite Friends to Group</a>
+    <a class="button radius left" data-reveal-id=""> Leave Group </a>
     <div id="content">
       
         <script>
