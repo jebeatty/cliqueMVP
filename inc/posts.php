@@ -90,7 +90,7 @@ function getRecent($userId){
   }
 
   //create a SQL query with WHERE groupId=? or groupId=?
-  $SQLQuery = "SELECT posterName, groupId, url, postDate FROM posts WHERE ";
+  $SQLQuery = "SELECT posterName, groupId, url, postDate, postId, comment FROM posts WHERE ";
 
   //a For loop that concatenates groupId=? onto the SQL query, with ORs included except for the last iteration of the loop
 

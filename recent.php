@@ -45,14 +45,15 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   column1HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
                   column1HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
                   column1HTML += '<p> Recommendation text from the user who sent it. Check it out! </p>'
-                  column1HTML += '<button>Funny</button><button>Interesting</button><button>Inspiring</button> </div>';
+                  column1HTML += '<a class="button radius" data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);">See Comments</a> </div>';
                   }
                   else{
+                  var cleanURL = encodeURI(post.url);
                   column2HTML += '<div class="panel radius">';
                   column2HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
                   column2HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
                   column2HTML += '<p> Recommendation text from the user who sent it. Check it out! </p>'
-                  column2HTML += '  <button>Funny</button><button>Interesting</button><button>Inspiring</button> </div>';
+                  column2HTML += '<a class="button radius" data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);">See Comments</a> </div>';
                   }
                 });
 
@@ -63,7 +64,21 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
 
               }); //end getJSON
                 
+                
             });//end ready
+
+          
+         
+
+          function fillModal2(postId, postURL, posterName){
+            postURL = decodeURI(postURL);
+            var modalHTML = '<p id="modalTitle">Post #'+postId+' was posted by '+posterName+'</p><br>';
+            modalHTML += '<a class="embedly-card" href="'+postURL+'" target="_blank"> '+postURL+'</a>';
+            $('#detailModalContent').html(modalHTML);
+            //&#39;'+post.postId+'&#39;,&#39;'+post.url+'&#39;,&#39;'+post.posterName+'&#39;
+            //data-reveal-id="detailModal"
+
+          }
 
           </script>
 
@@ -77,7 +92,16 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
       
     </div>
 
-  <!--End Feature Content-->
+    <div id="detailModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+      <div id="detailModalContent">
+      <h2 id="modalTitle">Loading...</h2>
+      
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      </div>
+
+    </div>
+
+  <!--End Feature Content <script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>-->
 
   <!--Footer-->
       <footer id="footer">
