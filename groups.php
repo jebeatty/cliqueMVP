@@ -20,14 +20,18 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
         console.log("getting invites");
         $.getJSON('inc/invites.php', {action:"getGroupInvites"}, function(response){
 
-          console.log(" Invite REPSONSE: ");
-          console.log(response);
+          
           if (response.length>0){
           inviteHTML = ' <div class="row"> <div class="large-12 columns"> <div class="panel"> <h2> Pending Invitations </h2> </div> </div> </div> <div class="row"><div class="large-10 large-offset-1 columns">';
           
           $.each(response, function(index, groupInfo){
-          inviteHTML+= '<div class="panel"> <h4> '+groupInfo['groupName']+'</h4>';
-          inviteHTML+='<ul class="button-group round"><li> <a onclick="acceptInvite('+groupInfo['groupId']+'); return false;" class="button success"> Accept</a></li><li> <a onclick="rejectInvite(); return false;" class="button alert"> Reject</a></li> </ul> </div>';
+          if (groupInfo['inviterName']=='') {
+            groupInfo['inviterName']=='Anonymous';
+
+          }
+            
+          inviteHTML+= '<div class="panel"> <h4> '+groupInfo['inviterName']+' invited you to join '+groupInfo['groupName']+'</h4>';
+          inviteHTML+='<ul class="button-group round"><li> <a onclick="acceptInvite('+groupInfo['groupId']+'); return false;" class="button success"> Accept</a></li><li> <a onclick="rejectInvite('+groupInfo['groupId']+'); return false;" class="button alert"> Reject</a></li> </ul> </div>';
 
           });// end each
           
@@ -50,16 +54,16 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
               newHTML+='<div class="large-12 columns"><div class="panel"><p>'+group[0].groupName+' </p></div><ul class="large-block-grid-3">';
 
                 $.each(group[1], function(index, post){
-                  newHTML +='<li><a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a></li>';
+                  newHTML +='<li><div id="cardArea" class="panel radius"><a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a></div></li>';
 
                 });
-                newHTML += '</ul><a class="button radius left" href="groupLibrary.php?groupName='+ encodeURI(group[0].groupName)+'&groupId='+group[0].groupId+'"> See More Posts in this Group </a><a class="button right">Leave Group</a></div>';
+                newHTML += '</ul><a class="button radius left" href="groupLibrary.php?groupName='+ encodeURI(group[0].groupName)+'&groupId='+group[0].groupId+'"> See More Posts in this Group </a><a class="button right" data-reveal-id="leaveGroupModal" onclick="setModalTitle(&#39;'+group[0].groupName+'&#39;,&#39;'+group[0].groupId+'&#39;);">Leave Group</a></div>';
 
               }); //end first each
              
               newHTML +='</div>';
-              console.log(newHTML);
-              $('#content').append(newHTML);
+              
+              $('#content').html(newHTML);
             }
             else{
               $('#content').append('<div class="row"><div class="large-6-columns large-offset-3"> No groups found - Join a discovery group or create your own!</div></div></div>');
@@ -76,7 +80,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
           if (response=="success") {
             getInvites();
             getGroups();
-            location.reload(true);
+            location.reload();
 
           } else{
             alert("Something went wrong in accepting the invite!");
@@ -86,11 +90,48 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
       }
 
-       function rejectInvite(){
-        console.log('invite rejected');
+      function rejectInvite(groupId){
+        $.getJSON('inc/invites.php',{action:"rejectInvite", rejectedGroupId:groupId},function(response){
+          console.log(response);
+          if (response=="success") {
+            getInvites();
+            getGroups();
+            location.reload();
+
+          } else{
+            alert("Something went wrong!");
+          }
+
+        });
 
       }
 
+      function setModalTitle(titleInput, groupId){
+      $('#leaveGroupModalTitle').html("Are you sure you'd like to leave "+titleInput+"?");
+
+       $('#modalButtons').html('<a class="button left" onclick="leaveGroup(&#39;'+groupId+'&#39;); return false;"> Yes, Leave Group </a><a class="button right" onclick="customModalClose();"> No, Never Mind </a>');
+
+
+      }
+
+      function leaveGroup(groupId){
+        $.getJSON('inc/invites.php',{action:"leaveGroup", rejectedGroupId:groupId},function(response){
+          console.log(response);
+          if (response=="success") {
+            customModalClose();
+            getInvites();
+            getGroups();
+            //location.reload();
+
+          } else{
+            alert("Something went wrong!");
+          }
+
+        });
+
+      }
+
+      
 
       $(document).ready(function(){
           getInvites();
@@ -100,6 +141,22 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
       
     </script>
   <!--End Feature Content-->
+  <!-- Modal Views -->
+   <div id="leaveGroupModal" class="reveal-modal small" data-reveal>
+
+      <h2 id="leaveGroupModalTitle">Loading...</h2>
+      <p> Please confirm - once you leave, you'll need to be invited back into the group to rejoin. <p>
+        <div id="modalButtons">
+
+        </div>
+      
+      
+    
+
+    </div>
+
+
+  <!-- End Modal Views -->
 
   <!--Footer-->
       <footer id="footer">
@@ -119,6 +176,9 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
   <script>
     $(document).foundation();
     $(document).foundation('equalizer','reflow');
+    function customModalClose(){
+        $('#leaveGroupModal').foundation('reveal', 'close');
+    }
   </script>
   </body>
   

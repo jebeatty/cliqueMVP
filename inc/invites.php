@@ -34,6 +34,20 @@ function actionSelector($action){
 		$groupId=$_GET['acceptedGroupId'];
 		$userId = $_SESSION['userId'];
 		acceptInvite($groupId,$userId);
+		echo json_encode('success');
+	}
+	else if ($action=="rejectInvite"){
+		$groupId=$_GET['rejectedGroupId'];
+		$userId = $_SESSION['userId'];
+		deleteInvite($groupId,$userId);
+		echo json_encode('success');
+
+	} else if ($action=="leaveGroup"){
+		$groupId=$_GET['rejectedGroupId'];
+		$userId = $_SESSION['userId'];
+		removeUserFromGroup($groupId,$userId);
+		echo json_encode('success');
+
 	}
 
 	else{
@@ -63,17 +77,21 @@ function createGroup($name,$desc,$public,$invites){
         echo "Group creation data insertion error!";
         exit;
     }
+ 	addUserToGroup($_SESSION['userId'],$insertId, $name);
+ 	$inviterName=$_SESSION['username'];
+ 	sendInvites($insertId, $inviterName, $invites);	
  	
- 	sendInvites($insertId,$invites);	
  }
 
 
 //send invites
-function sendInvites($groupId,$invites){
-	
+function sendInvites($groupId, $inviterName, $invites){
+	echo 'sending invites';
+	echo $groupId;
+	echo $inviterName;
 	foreach ($invites as $userInvite) {
 		$userId=getUserIdForEmail($userInvite);
-		inviteUserToGroup($userId,$groupId);
+		inviteUserToGroup($userId,$groupId, $inviterName);
 	}
 
 	echo "success";
@@ -85,7 +103,7 @@ function acceptInvite($groupId,$userId){
 	$groupName=getGroupNameForId($groupId);
 	addUserToGroup($userId,$groupId, $groupName);
 	deleteInvite($groupId, $userId);
-	echo json_encode('success');
+	
 
 }
 
@@ -93,7 +111,7 @@ function acceptInvite($groupId,$userId){
 function deleteInvite($groupId,$userId){
 	require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
-
+  	
 	try {
     $results = $db->prepare("DELETE FROM groupInvites WHERE groupId=? AND userId=?");
     $results->execute(array($groupId, $userId));
@@ -102,7 +120,7 @@ function deleteInvite($groupId,$userId){
         echo "Data deletion error!";
         exit;
     }
-
+   
 }
 
 //query invites, json return
@@ -111,7 +129,7 @@ function queryInvites($userId){
   	require(ROOT_PATH."inc/database.php");
 
 	try {
-    $results = $db->prepare("SELECT groupId FROM groupInvites WHERE userId=?");
+    $results = $db->prepare("SELECT groupId, inviterName FROM groupInvites WHERE userId=?");
     $results->execute(array($userId));
 
     } catch(Exception $e){
@@ -135,28 +153,84 @@ function queryInvites($userId){
 
 }
 
-function inviteUserToGroup($userId,$groupId){
+function inviteUserToGroup($userId,$groupId, $inviterName){
+	
+  	$alreadyMember = checkUserGroupMembership($userId,$groupId);
+  	echo 'alreadyMember returns:';
+  	echo $alreadyMember;
+
+  	if (!$alreadyMember) {
+
+  	require_once("../inc/config.php");
+  	require(ROOT_PATH."inc/database.php");
+
+  		try {
+    	$results = $db->prepare("INSERT INTO `groupInvites` (`groupId`, `userId`, `inviterName`,`accepted`) VALUES (?,?,?,0)");
+    	$results->execute(array($groupId, $userId, $inviterName));
+
+    	} catch(Exception $e){
+	        echo "User invite data insertion error!";
+	        exit;
+    	}
+  	}
+	
+
+}
+
+function checkUserGroupMembership($userId, $groupId){
 	require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
 
-	try {
-    $results = $db->prepare("INSERT INTO `groupInvites` (`groupId`, `userId`,`accepted`) VALUES (?,?,0)");
-    $results->execute(array($groupId, $userId));
+  	try {
+    	$results = $db->prepare("SELECT relationId FROM userGroupRelations WHERE userId=? AND groupId=? ");
+    	$results->execute(array($userId, $groupId));
 
     } catch(Exception $e){
-        echo "User invite data insertion error!";
+        echo "User membership data  error!";
         exit;
     }
+
+    $resultCount = $results->rowCount();
+    if ($resultCount>0) {
+    	return true;
+    }
+    else{
+    	return false;
+    }
+
 
 }
 
 function addUserToGroup($userId,$groupId, $groupName){
+	$alreadyMember = checkUserGroupMembership($userId,$groupId);
+
+  	if (!$alreadyMember) {
+
+		require_once("../inc/config.php");
+	  	require(ROOT_PATH."inc/database.php");
+
+		try {
+	    $results = $db->prepare("INSERT INTO `userGroupRelations` (`groupId`, `groupName`,`userId`) VALUES (?,?,?)");
+	    $results->execute(array($groupId, $groupName, $userId));
+
+	    } catch(Exception $e){
+	        echo "User data insertion error!";
+	        exit;
+	    }
+	}
+
+}
+
+function removeUserFromGroup($groupId, $userId){
 	require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
-
+  	
 	try {
-    $results = $db->prepare("INSERT INTO `userGroupRelations` (`groupId`, `groupName`,`userId`) VALUES (?,?,?)");
-    $results->execute(array($groupId, $groupName, $userId));
+    $results = $db->prepare("DELETE FROM `userGroupRelations` 
+    						WHERE userId=? 
+    						AND groupId=?");
+
+    $results->execute(array($userId, $groupId));
 
     } catch(Exception $e){
         echo "User data insertion error!";
@@ -164,7 +238,6 @@ function addUserToGroup($userId,$groupId, $groupName){
     }
 
 }
-
 
 //these two functions could be consolidated into 1 getValueForKeyInTable() function
 function getGroupNameForId($groupId){

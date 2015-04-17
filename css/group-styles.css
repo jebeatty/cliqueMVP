@@ -18,6 +18,14 @@ body{
 	height: 2.1em;
 }
 
+#cardArea{
+	background: white;
+}
+
+.large-block-grid-3>li{
+	padding: 0px 4px 15px 4px;
+}
+
 .no-touch.boxshadow.borderradius.rgba.mediaquery.card-bd.ltr.font-wf-sans.border-blockquote.theme-light{
 	background: white;
 }

@@ -57,7 +57,7 @@
 
         $("#autocomplete").autocomplete({
           source: "inc/search.php",
-          minLength: 1,//search after two characters
+          minLength: 1//search after two characters
          
         });
 
@@ -70,7 +70,8 @@
           formData+='&action=createGroup';
           console.log(formData)
           $.post(url, formData, function(response){
-             
+             console.log("Invite response:");
+             console.log(response);
               if (response="success") {
                 $('#addGroup').html("<p> Posted! </p>");
               }
