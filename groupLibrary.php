@@ -16,13 +16,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
     <div id="content">
       
         <script>
-    
+    		
             $(document).ready(function(){
 				var groupId = getParameterByName('groupId');
 				var groupName = getParameterByName('groupName');
 
+				//write the invite/leave button html here with groupId
 				var optionButtonHTML ='';
-              optionButtonHTML +='<a class="button radius left" data-reveal-id=""> Invite Friends to Group</a>';
+              optionButtonHTML +='<a class="button radius left" data-reveal-id="inviteFriendsModal"> Invite Friends to Group</a>';
               optionButtonHTML +='<a class="button radius left" data-reveal-id="leaveGroupModal" onclick="setModalContent(&#39;'+groupName+'&#39;,&#39;'+groupId+'&#39;);"> Leave Group </a>';
               $('#groupOptionButtons').html(optionButtonHTML);
 				
@@ -42,9 +43,29 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
               }); //end getJSON
 
-              //write the invite/leave button html here with groupId
               
+              $('#inviteFriends').submit(function(evt){
+	          console.log("inviteFriends event detected!");
+	          evt.preventDefault();
+	          var url = $(this).attr("action");
+	          var formData = $(this).serialize();
+	          formData+='&action=inviteFriends&groupId='+groupId;
 
+	          console.log(formData)
+
+		          $.post(url, formData, function(response){
+		             console.log(response);
+		              if (response="success") {
+		                $('#inviteFriendsModal').html("<p> Invites sent! </p>");
+		                $('#inviteFriendsModal').foundation('reveal', 'close');
+		              }
+		              else{
+		                $('#inviteFriendsModal').html("<p> Something seems to have gone wrong! Please try again later </p>");
+		              }
+		            
+		          
+		          }); //end post
+	      	  });
             });//end ready
 
 	        function getParameterByName(name) {
@@ -84,42 +105,46 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
       <fieldset>
         <legend> Select Friends to Invite:</legend>
         <div class="ui-widget">
-          <input placeholder="Enter friend's email" id="autocomplete" size="30"><p id="warningArea"></p> <button onclick="addFriendToTable(); return false;"> Add Friend to Group</button>
+          <input placeholder="Enter friend's email" id="inviteAutocomplete" size="30"><p id="inviteWarningArea"></p> <button onclick="addFriendToInviteTable(); return false;"> Invite Friend to Group</button>
+           
           <script>
-          $("#autocomplete").autocomplete({
+          
+          //invite friend code
+
+          $("#inviteAutocomplete").autocomplete({
           source: "inc/search.php",
           minLength: 1//search after two characters
          
           });
 
-          function addFriendToTable(){
-            var friendEmail = $('#autocomplete').val();
+          function addFriendToInviteTable(){
+            var friendEmail = $('#inviteAutocomplete').val();
             if (friendEmail.indexOf('@')>0) {
-              var existingFriends = $('#friendZone').html();
+              var existingFriends = $('#inviteFriendZone').html();
               var newFriend = '<input type="checkbox" name="members[]" value="'+friendEmail;
               if (existingFriends.indexOf(newFriend)==-1) {
-                $('#warningArea').html('');
-                $('#friendZone').append(newFriend+'" checked> '+friendEmail+'<br>');
+                $('#inviteWarningArea').html('');
+                $('#inviteFriendZone').append(newFriend+'" checked> '+friendEmail+'<br>');
               }
               else{
-                $('#warningArea').html('Friend already selected');
+                $('#inviteWarningArea').html('Friend already selected');
               }
             } 
             else{
-              $('#warningArea').html('Invalid Email');
+              $('#inviteWarningArea').html('Invalid Email');
             }
           }
           </script>
         </div>
         <div>
-          Invited Friends: <br>
-          <ul id="friendZone">
+          Selected Friends: <br>
+          <ul id="inviteFriendZone">
 
           </ul>
         </div>
       </fieldset>
      
-      <input type="submit" value="Create Group!">
+      <input type="submit" value="Invite Friends!">
       </form>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>

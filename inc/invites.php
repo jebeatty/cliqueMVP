@@ -26,6 +26,16 @@ function actionSelector($action){
 		
 		createGroup($groupName,$groupDesc,$public,$invitedMembers);
 	}
+	else if ($action=="inviteFriends") {
+		$invitedMembers = $_POST['members'];
+		$groupId = $_POST['groupId'];
+		$inviterName=$_SESSION['username'];
+
+		echo $groupId;
+		echo var_dump($invitedMembers);
+		sendInvites($groupId, $inviterName, $invitedMembers);	
+		
+	}
 	else if ($action=="getGroupInvites"){
 		queryInvites($_SESSION['userId']);
 
@@ -86,8 +96,9 @@ function createGroup($name,$desc,$public,$invites){
 
 //send invites
 function sendInvites($groupId, $inviterName, $invites){
-	echo 'sending invites';
+	echo "groupId:";
 	echo $groupId;
+	echo "inviter:";
 	echo $inviterName;
 	foreach ($invites as $userInvite) {
 		$userId=getUserIdForEmail($userInvite);
@@ -156,10 +167,9 @@ function queryInvites($userId){
 function inviteUserToGroup($userId,$groupId, $inviterName){
 	
   	$alreadyMember = checkUserGroupMembership($userId,$groupId);
-  	echo 'alreadyMember returns:';
-  	echo $alreadyMember;
+  	$alreadyInvited = checkUserGroupInviteStatus($userId,$groupId);
 
-  	if (!$alreadyMember) {
+  	if (!$alreadyMember && !$alreadyInvited) {
 
   	require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
@@ -183,6 +193,30 @@ function checkUserGroupMembership($userId, $groupId){
 
   	try {
     	$results = $db->prepare("SELECT relationId FROM userGroupRelations WHERE userId=? AND groupId=? ");
+    	$results->execute(array($userId, $groupId));
+
+    } catch(Exception $e){
+        echo "User membership data  error!";
+        exit;
+    }
+
+    $resultCount = $results->rowCount();
+    if ($resultCount>0) {
+    	return true;
+    }
+    else{
+    	return false;
+    }
+
+
+}
+
+function checkUserGroupInviteStatus($userId, $groupId){
+	require_once("../inc/config.php");
+  	require(ROOT_PATH."inc/database.php");
+
+  	try {
+    	$results = $db->prepare("SELECT groupId FROM groupInvites WHERE userId=? AND groupId=? ");
     	$results->execute(array($userId, $groupId));
 
     } catch(Exception $e){

@@ -15,11 +15,11 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
             <h4>Join a Discovery Group!</h4>
           </div>
               <h2> <i class="fi-web"></i> + <i class="fi-torsos-all"></i> = <i class="fi-lightbulb"></i> </h2> 
-          <p> Become an internet explorer by joining a Clique discovery group. You'll be placed in a small 5-6 person group along with other random users, with the goal of sharing 
+          <p> Become an internet explorer by joining a Clique discovery group. You'll be placed in a small group along with 6 other random users, with the goal of sharing 
               the most interesting things you read on the web. It turns out the internet is a big place, and seeing what other folks are reading is a great way to step out of your bubble
               and see parts of the world, both on and offline, that you never knew existed. There's a big world out there - join a Discovery Group and check it out!
             </p>
-            <button>Join a Discovery Group!</button>
+            <a class="button" data-reveal-id="discoveryModal" onclick="addToDiscovery();"> Sign Me Up, Scotty! </a>
         </div>
       </div>
 
@@ -51,12 +51,34 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
     </div>
 
     <script>
+      function addToDiscovery(){
+
+        $.getJSON('inc/discovery.php',{action:"joinDiscovery"},function(response){
+                console.log("RESPONSE:");
+                console.log(response);
+                
+                //get back the groupid and groupname - that way we can add a "go there now" button
+
+              }); //end getJSON
+
+
+      }
       $(document).ready(function(){
       
             
       });//end ready
     </script>
   <!--End Feature Content-->
+  <!-- Modal Content -->
+  <div id="discoveryModal" class="reveal-modal small" data-reveal>
+
+      <h2 id="discoveryModalTitle">Loading...</h2>
+  
+  </div>
+
+
+
+
 
   <!--Footer-->
       <footer id="footer">

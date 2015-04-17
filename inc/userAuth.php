@@ -3,14 +3,6 @@
 // User Authentification Protocols - Login, password recovery, etc.
 // We'll start by taking in posted data on user, then calling the appropriate function
 
-require_once("../vendor/autoload.php");
-use Facebook\FacebookSession;
-use Facebook\FacebookRedirectLoginHelper;
-use Facebook\FacebookRequest;
-use Facebook\FacebookResponse;
-use Facebook\FacebookSDKException;
-use Facebook\FacebookRequestException;
-use Facebook\FacebookAuthorizationException;
 
 session_start();
 $action = $_POST['action'];
@@ -18,15 +10,18 @@ $action = $_POST['action'];
 
 if ($action=="FBLogin"){
     FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
-    $helper = new FacebookRedirectLoginHelper('http://www.krizna.com/fbconfig.php' );
+    $helper = new FacebookRedirectLoginHelper('');
     try {
         $session = $helper->getSessionFromRedirect();
-        $json = json_encode("Initial FB success");
-        echo $json;
+       
         } catch( FacebookRequestException $ex ) {
           // When Facebook returns an error
         } catch( Exception $ex ) {
           // When validation fails or other local issues
+        }
+        if ($session) {
+             $json = json_encode("Initial FB success");
+        echo $json;
         }
     
 } else{
