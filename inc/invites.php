@@ -3,6 +3,7 @@
 //manage groups, invites, etc.
 // start with action selector + session management
 
+
 session_start();
 if (isset($_SESSION['username'])) {
 	if (isset($_POST["action"])) {
@@ -187,6 +188,7 @@ function inviteUserToGroup($userId,$groupId, $inviterName){
 
 }
 
+
 function checkUserGroupMembership($userId, $groupId){
 	require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
@@ -292,6 +294,7 @@ function getGroupNameForId($groupId){
 
     return $groupData[0]["groupName"];
 }
+
 
 function getUserIdForEmail($email){
 	require_once("../inc/config.php");

@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once("../vendor/autoload.php");
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
@@ -9,7 +10,7 @@ use Facebook\FacebookRequestException;
 use Facebook\FacebookAuthorizationException;
 use Facebook\GraphUser;
 
-session_start();
+
 /*
 require_once("vendor/autoload.php");
 use Facebook\FacebookSession;

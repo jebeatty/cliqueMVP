@@ -56,15 +56,17 @@ function addUserToGroup($userId,$groupId, $groupName){
 
 		require_once("../inc/config.php");
 	  	require(ROOT_PATH."inc/database.php");
-
+	  	
 		try {
 	    $results = $db->prepare("INSERT INTO `userGroupRelations` (`groupId`, `groupName`,`userId`) VALUES (?,?,?)");
 	    $results->execute(array($groupId, $groupName, $userId));
-
+	    
 	    } catch(Exception $e){
 	        echo "User data insertion error!";
 	        exit;
 	    }
+
+	    addMember($groupId);
 	}
 
 }
@@ -72,7 +74,8 @@ function addUserToGroup($userId,$groupId, $groupName){
 function removeUserFromGroup($groupId, $userId){
 	require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
-  	
+  	echo $groupId;
+  	echo $userId;
 	try {
     $results = $db->prepare("DELETE FROM `userGroupRelations` 
     						WHERE userId=? 
@@ -81,13 +84,12 @@ function removeUserFromGroup($groupId, $userId){
     $results->execute(array($userId, $groupId));
 
     } catch(Exception $e){
-        echo "User data insertion error!";
+        echo "User data removal error!";
         exit;
     }
 
 }
 
-//these two functions could be consolidated into 1 getValueForKeyInTable() function
 function getGroupNameForId($groupId){
 	require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
@@ -107,5 +109,19 @@ function getGroupNameForId($groupId){
     return $groupData[0]["groupName"];
 }
 
+function addMember($groupId){
+	require_once("../inc/config.php");
+  	require(ROOT_PATH."inc/database.php");
+
+
+	try {
+    $results = $db->prepare("UPDATE groups SET numberOfMembers = numberOfMembers+1 WHERE groupId = ?");
+    $results->execute(array($groupId));
+
+    } catch(Exception $e){
+        echo "Member addition data error!";
+        exit;
+    }
+}
 
 ?>

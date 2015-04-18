@@ -14,7 +14,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
           <div class="panel radius">
             <h4>Join a Discovery Group!</h4>
           </div>
-              <h2> <i class="fi-web"></i> + <i class="fi-torsos-all"></i> = <i class="fi-lightbulb"></i> </h2> 
+              <h1> <span> <i class="fi-web"></i>__+__<i class="fi-torsos-all"></i>__=__<i class="fi-lightbulb"></i> <span></h1> 
           <p> Become an internet explorer by joining a Clique discovery group. You'll be placed in a small group along with 6 other random users, with the goal of sharing 
               the most interesting things you read on the web. It turns out the internet is a big place, and seeing what other folks are reading is a great way to step out of your bubble
               and see parts of the world, both on and offline, that you never knew existed. There's a big world out there - join a Discovery Group and check it out!
@@ -41,26 +41,27 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
           </div>
         </div>
       </div>
-
-
-
-
-
-
-
     </div>
 
     <script>
       function addToDiscovery(){
 
         $.getJSON('inc/discovery.php',{action:"joinDiscovery"},function(response){
-                console.log("RESPONSE:");
-                console.log(response);
                 
                 //get back the groupid and groupname - that way we can add a "go there now" button
+                if (response) {
+                  var discoveryModalHTML = '<h2 id="discoveryModalTitle">You&#39;re All Set</h2><p> Welcome to '+response.groupName+'! ';
+                  if (response.numberOfMembers=="1") {
+                    discoveryModalHTML += 'All the other groups were full, so you&#39;re the first one here! <br><br>Don&#39;t worry, the smallest discovery groups get priority when new folks sign up, so it won&#39;t be long till you have some partners to share with.  <br><br> In the meantime, feel free to head over to the group area and get things started with a post or two of the most interesting thing you&#39;ve seen around the web recently.';
+                  } else{
+                    var otherMembers = Number(response.numberOfMembers)-1;
+                    discoveryModalHTML += 'We had availability in a existing group, so you&#39;ve been placed in a group with '+otherMembers+' other users!  Head over to the group area to see what&#39;s been recommended already and introduce yourself with a post or two of the most interesting thing you&#39;ve seen around the web recently.';
+                  }
 
+                  discoveryModalHTML+='<div id=discoveryModalButtons> <a class="button radius left" href="groupLibrary.php?groupName='+response.groupName+'&groupId='+response.groupId+'"> Go To My New Group </a><a class="button radius left" onclick="customModalClose();"> I&#39;m Good For Now, Thanks </a></div>';
+                  $('#discoveryModal').html(discoveryModalHTML);
+                };
               }); //end getJSON
-
 
       }
       $(document).ready(function(){
@@ -75,10 +76,6 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
       <h2 id="discoveryModalTitle">Loading...</h2>
   
   </div>
-
-
-
-
 
   <!--Footer-->
       <footer id="footer">
@@ -98,6 +95,9 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
   <script>
     $(document).foundation();
     $(document).foundation('equalizer','reflow');
+    function customModalClose(){
+        $('#discoveryModal').foundation('reveal', 'close');
+    }
   </script>
   </body>
   

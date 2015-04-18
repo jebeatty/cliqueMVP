@@ -43,3 +43,16 @@ body{
 	text-align: center;
 }
 
+
+h1{
+	font-size: 3em;
+	color: #f1f1f1;
+}
+
+[class*="fi-"]{
+	display: inline-block;
+	color: #81078e;
+}
+
+
+
