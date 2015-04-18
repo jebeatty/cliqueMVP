@@ -41,19 +41,32 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                 $.each(response, function(index, post){
                   var mod = index%2;
                   if (mod===1) {
+                  var cleanURL = encodeURI(post.url);
                   column1HTML += '<div class="panel radius">';
                   column1HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
+
+                  if (post.comment!='') {
+                    column1HTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
+                  }
+                  
                   column1HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
-                  column1HTML += '<p> Recommendation text from the user who sent it. Check it out! </p>'
-                  column1HTML += '<a class="button radius" data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);">See Comments</a> </div>';
+                  column1HTML += '<ul class="button-group round even-3"><li><a href="#" class="button secondary">Okay</a></li><li><a href="#" class="button">Like It</a></li><li><a href="#" class="button success">Love It</a></li></ul>';
+                  column1HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
+                  column1HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
                   }
                   else{
                   var cleanURL = encodeURI(post.url);
                   column2HTML += '<div class="panel radius">';
                   column2HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
+                  
+                  if (post.comment!='') {
+                    column2HTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
+                  }
+                  
                   column2HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
-                  column2HTML += '<p> Recommendation text from the user who sent it. Check it out! </p>'
-                  column2HTML += '<a class="button radius" data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);">See Comments</a> </div>';
+                  column2HTML += '<ul class="button-group round even-3"><li><a href="#" class="button secondary">Okay</a></li><li><a href="#" class="button">Like It</a></li><li><a href="#" class="button success">Love It</a></li></ul>';
+                  column2HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
+                  column2HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
                   }
                 });
 
@@ -74,13 +87,18 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
             postURL = decodeURI(postURL);
             var modalHTML = '<p id="modalTitle">Post #'+postId+' was posted by '+posterName+'</p><br>';
             modalHTML += '<a class="embedly-card" href="'+postURL+'" target="_blank"> '+postURL+'</a>';
-            $('#detailModalContent').html(modalHTML);
-            //&#39;'+post.postId+'&#39;,&#39;'+post.url+'&#39;,&#39;'+post.posterName+'&#39;
-            //data-reveal-id="detailModal"
 
+            //$('#detailModalContent').html(modalHTML);
+            /*
+            var tab1Content = "<p> Tab 1 test </p>";
+            var tab2Content = "<p> Tab 2 test </p>";
+            $('#panel1').html(tab1Content);
+            $('#panel2').html(tab2Content);
+            */
           }
 
           </script>
+
 
         <div class="large-6 columns" id="leftFeedColumn">
           
@@ -96,8 +114,24 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
       <div id="detailModalContent">
       <h2 id="modalTitle">Loading...</h2>
       
-      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
       </div>
+      <div id="discussionTabs">
+        <ul class="tabs" data-tab>
+          <li class="tab-title active"><a href="#panel1">Comments</a></li>
+          <li class="tab-title"><a href="#panel2">Responses</a></li>
+        </ul>
+        <div class="tabs-content">
+          <div class="content active" id="panel1">
+            <p>This is the first panel of the basic tab example. You can place all sorts of content here including a grid.</p>
+          </div>
+          <div class="content" id="panel2">
+            <p>This is the second panel of the basic tab example. This is the second panel of the basic tab example.</p>
+          </div>
+        </div>
+      </div>
+            
+      <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+      
 
     </div>
 
@@ -116,9 +150,11 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
       '.js><\/script>')
 
   </script>
+  <script src="js/vendor/modernizr.js"></script>
   <script src="js/foundation.min.js"></script>
   <script>
     $(document).foundation();
+    $(document).foundation('tab', 'reflow');
   </script>
   </body>
   
