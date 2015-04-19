@@ -51,9 +51,18 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   
                   column1HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
                   column1HTML += '<ul class="button-group round even-3">';
-                  column1HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
-                  column1HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
-                  column1HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+
+                  if (post.postLiked) {
+                    column1HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
+                    column1HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
+                    column1HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
+
+                  } else{
+                    column1HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
+                    column1HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
+                    column1HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+                  }
+
                   column1HTML += '</ul>';
                   column1HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
                   column1HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
@@ -69,9 +78,19 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   
                   column2HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
                   column2HTML += '<ul class="button-group round even-3">';
-                  column2HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
-                  column2HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
-                  column2HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+
+
+                  if (post.postLiked) {
+                    column2HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
+                    column2HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
+                    column2HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
+
+                  } else{
+                    column2HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
+                    column2HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
+                    column2HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+                  }
+
                   column2HTML += '</ul>';
                   column2HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
                   column2HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';

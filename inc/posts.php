@@ -8,6 +8,7 @@ if (isset($_SESSION['username'])) {
     $action = $_GET["action"];
   }
 
+  actionSelector($action);
   } else {
     echo "Invalid session data";
   } 
@@ -121,6 +122,17 @@ function getRecent($userId){
     }
 
     $recent = $results->fetchAll(PDO::FETCH_ASSOC);
+    //need to overlay userPostRelation & like data
+    foreach ($recent as &$recentPost) {
+      $postLiked = checkIfUserLikedPost($recentPost['postId'], $userId);
+      $recentPost['postLiked']=$postLiked;
+
+      if ($postLiked) {
+        $likeData = getLikesForPost($recentPost['postId']);
+        $recentPost['likeData']=$likeData;
+      }
+    }
+
     $json = json_encode($recent);
     echo $json;
 
@@ -213,6 +225,46 @@ function getGroupData($groupId){
     $groupPosts = $results->fetchAll(PDO::FETCH_ASSOC);
 
     return $groupPosts;
+
+}
+
+function getLikesForPost($postId){
+  require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+    try{
+      $results = $db->prepare("SELECT ehs, likes, loves FROM posts WHERE postId=? LIMIT 1");
+      $results->execute(array($postId));
+
+    } catch(Exception $e){
+       echo "Like tabulation data error!";
+        exit;
+    }
+
+    $likeData = $results->fetchAll(PDO::FETCH_ASSOC);
+    return $likeData;
+}
+
+function checkIfUserLikedPost($postId, $userId){
+  require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+    try{
+      $results = $db->prepare("SELECT postId FROM userPostRelations WHERE postId=? AND userId=?");
+      $results->execute(array($postId, $userId));
+
+    } catch(Exception $e){
+       echo "Like tabulation data error!";
+        exit;
+    }
+
+    $results = $results->fetchAll(PDO::FETCH_ASSOC);
+    if (count($results)>0) {
+      return true;
+    } else{
+    return false;
+    }
+
 
 }
 
