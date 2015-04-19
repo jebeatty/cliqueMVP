@@ -50,7 +50,11 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   }
                   
                   column1HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
-                  column1HTML += '<ul class="button-group round even-3"><li><a href="#" class="button secondary">Okay</a></li><li><a href="#" class="button">Like It</a></li><li><a href="#" class="button success">Love It</a></li></ul>';
+                  column1HTML += '<ul class="button-group round even-3">';
+                  column1HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
+                  column1HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
+                  column1HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+                  column1HTML += '</ul>';
                   column1HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
                   column1HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
                   }
@@ -64,7 +68,11 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   }
                   
                   column2HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
-                  column2HTML += '<ul class="button-group round even-3"><li><a href="#" class="button secondary">Okay</a></li><li><a href="#" class="button">Like It</a></li><li><a href="#" class="button success">Love It</a></li></ul>';
+                  column2HTML += '<ul class="button-group round even-3">';
+                  column2HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
+                  column2HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
+                  column2HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+                  column2HTML += '</ul>';
                   column2HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
                   column2HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
                   }
@@ -80,7 +88,22 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                 
             });//end ready
 
-          
+          function submitLike(likeType, postId){
+            if (likeType=='ehs'||likeType=='likes'||likeType=='loves') {
+              
+              $.getJSON('inc/social.php',{action:"submitLike",likeType:likeType, postId:postId},function(response){
+                console.log(response)
+
+                if (response) {
+                  $('#okay'+postId).html(response[0]['ehs']);
+                  $('#like'+postId).html(response[0]['likes']);
+                  $('#love'+postId).html(response[0]['loves']);
+                }
+
+              });
+
+            }
+          }
          
 
           function fillModal2(postId, postURL, posterName){
@@ -88,13 +111,13 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
             var modalHTML = '<p id="modalTitle">Post #'+postId+' was posted by '+posterName+'</p><br>';
             modalHTML += '<a class="embedly-card" href="'+postURL+'" target="_blank"> '+postURL+'</a>';
 
-            //$('#detailModalContent').html(modalHTML);
-            /*
+            $('#detailModalContent').html(modalHTML);
+            
             var tab1Content = "<p> Tab 1 test </p>";
             var tab2Content = "<p> Tab 2 test </p>";
             $('#panel1').html(tab1Content);
             $('#panel2').html(tab2Content);
-            */
+            
           }
 
           </script>

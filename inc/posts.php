@@ -2,8 +2,11 @@
 
 session_start();
 if (isset($_SESSION['username'])) {
-  $action = $_GET["action"];
-  actionSelector($action);
+  if (isset($_POST["action"])) {
+    $action = $_POST["action"];
+  } else{
+    $action = $_GET["action"];
+  }
 
   } else {
     echo "Invalid session data";
