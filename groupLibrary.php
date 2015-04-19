@@ -32,7 +32,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
                 var blockgridHTML = '';
 
                 $.each(response, function(index, post){
-                  blockgridHTML += '<li class="panel radius">';
+                  blockgridHTML += '<li class="panel radius" data-equalizer-watch>';
                   blockgridHTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
                   blockgridHTML += '</li>';
                   
@@ -78,7 +78,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
 
           </script>
-       <ul class="large-block-grid-4" id="itemGrid"> 
+       <ul class="large-block-grid-4" id="itemGrid" data-equalizer> 
         <script async src="//cdn.embedly.com/widgets/platform.js" charset="UTF-8"></script>
       </ul>
       

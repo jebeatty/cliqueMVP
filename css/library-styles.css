@@ -1,5 +1,5 @@
 body{
-	background: #f1f1f1;
+	background: #e4e4e4;
 }
 
 #content{
@@ -27,8 +27,9 @@ body{
 
 }
 
+
 .button.radius.right{
 	border-width: 1.5px;
-	height: 2.1em;
+	height: 2.4em;
 }
 

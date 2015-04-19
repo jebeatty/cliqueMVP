@@ -1,3 +1,7 @@
+body{
+	background: #e4e4e4;
+}
+
 .callout{
 	margin-top: 4px;
 
@@ -67,7 +71,7 @@
 
 .button.radius.right{
 	border-width: 1.5px;
-	height: 2.1em;
+	height: 2.4em;
 }
 
 .discussionStats{

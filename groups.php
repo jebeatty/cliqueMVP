@@ -45,13 +45,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
       function getGroups(){
         $.getJSON('inc/posts.php',{action:"getAllGroupData"},function(response){
-            $('#content').html(' <div class="row"><div class="large-12 columns"><div class="panel"><h2> My Groups </h2></div></div></div>');
+            
 
             if (response.length>0){
-               var newHTML = '<div class="row">';
+               var newHTML = ' <div class="row"><div class="large-12 columns"><div class="panel"><h2> My Groups </h2></div></div></div>';
+               newHTML += '<div class="row">';
                $.each(response, function(index, group){
 
-              newHTML+='<div class="large-12 columns"><div class="panel"><p>'+group[0].groupName+' </p></div><ul class="large-block-grid-3">';
+              newHTML+='<div class="large-12 columns"><div class="title panel"><p>'+group[0].groupName+' </p></div><ul class="large-block-grid-3">';
 
                 $.each(group[1], function(index, post){
                   newHTML +='<li><div id="cardArea" class="panel radius"><a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a></div></li>';

@@ -1,6 +1,7 @@
 body{
-	background: #f1f1f1;
+	background: #e4e4e4;
 }
+
 
 #content{
 	padding-top: 0;
@@ -8,14 +9,23 @@ body{
 
 .panel{
 	text-align: center;
-	padding: 5px;
+	padding: 1px;
 	margin-bottom: 4px;
 	background: white; 
 }
 
+.title.panel{
+	background: #81078e;
+
+}
+
+.title.panel p{
+	color: white;
+}
+
 .button.radius.right{
 	border-width: 1.5px;
-	height: 2.1em;
+	height: 2.4em;
 }
 
 #cardArea{
@@ -23,7 +33,7 @@ body{
 }
 
 .large-block-grid-3>li{
-	padding: 0px 4px 15px 4px;
+	padding: 0px 1px 15px 1px;
 }
 
 .no-touch.boxshadow.borderradius.rgba.mediaquery.card-bd.ltr.font-wf-sans.border-blockquote.theme-light{

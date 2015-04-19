@@ -95,7 +95,7 @@
     <!-- Navigation -->
 
     <div id="navigationArea">
-      <nav class="top-bar">  
+      <nav class="top-bar" data-topbar role="navigation">  
     
           <ul class="title-area">
             <li class = "name"> 
@@ -128,12 +128,14 @@
                           modalListHTML += '<input type="checkbox" name="group[]" value="'+group.groupId+'"> '+group.groupName+'<br>';
                         });//end each
 
+                        console.log("Group list html:"+groupListHTML);
                         console.log("MODAL HTML:"+modalListHTML);
                         $('#modalGroups').html(modalListHTML);
                         $('#groupMenu').html(groupListHTML);
                       }); //end getJSON
                     </script>
                     <ul class="dropdown" id='groupMenu'>
+                      <li> Test <li>
                     </ul>
                  </li>
                  <li><a href="discover.php">Discover</a></li>
