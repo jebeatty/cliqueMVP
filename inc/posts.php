@@ -133,6 +133,11 @@ function getRecent($userId){
       }
     }
 
+    foreach ($recent as &$recentPost) {
+        $commentData = getCommentsForPost($recentPost['postId']);
+        $recentPost['commentData']=$commentData;
+    }
+
     $json = json_encode($recent);
     echo $json;
 
@@ -245,6 +250,24 @@ function getLikesForPost($postId){
     return $likeData;
 }
 
+function getCommentsForPost($postId){
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+    try{
+      $results = $db->prepare("SELECT comment, userId FROM comments WHERE postId=?");
+      $results->execute(array($postId));
+
+    } catch(Exception $e){
+       echo "Comment tabulation data error!";
+       exit;
+    }
+
+    $commentData = $results->fetchAll(PDO::FETCH_ASSOC);
+    return $commentData;
+
+}
+
 function checkIfUserLikedPost($postId, $userId){
   require_once("../inc/config.php");
     require(ROOT_PATH."inc/database.php");
@@ -266,6 +289,30 @@ function checkIfUserLikedPost($postId, $userId){
     }
 
 
+}
+
+function getUserNameForId($userId){
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+    try{
+      $results = $db->prepare("SELECT userName FROM users WHERE userId=?");
+      $results->execute(array($userId));
+
+    } catch(Exception $e){
+       echo "Like tabulation data error!";
+        exit;
+    }
+
+    $results = $results->fetchAll(PDO::FETCH_ASSOC);
+    if (count($results)>0) {
+      return $results[0]['userName'];
+    }
+    else{
+      return 'Anonymous';
+    }
+
+    
 }
 
 ?>

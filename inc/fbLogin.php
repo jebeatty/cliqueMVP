@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once("../vendor/autoload.php");
 use Facebook\FacebookSession;
 use Facebook\FacebookRedirectLoginHelper;
@@ -35,7 +36,7 @@ try {
       echo "Local failure";
     }
 if ($session) {
-	
+	//echo "facebook session login success...";
 	try {
 		$user_profile = (new FacebookRequest($session, 'GET', '/me'))->execute()->getGraphObject(GraphUser::className());
 
@@ -47,11 +48,14 @@ if ($session) {
 		}   
 	loginFBUser($user_profile, FALSE); //now that we have the user, lets log them in
 }
+else{
+  //echo "FB login failure...session not found...";
+}
 
 function loginFBUser($user_profile, $loop){
 	require_once("../inc/config.php");
  	require(ROOT_PATH."inc/database.php");
-
+  //echo "attempting clique login...";
 	try {
     	$results = $db->prepare("SELECT userName, userId, firstName, lastName
                               FROM users
@@ -112,6 +116,7 @@ function signupFBUser($user_profile){
 }
 
 function setSessionParams($user){
+ // echo "setting session parameters";
 	$_SESSION['username'] = $user[0]['userName'];
 	$_SESSION['userId'] = $user[0]['userId'];
 	session_regenerate_id();
@@ -124,6 +129,6 @@ function setSessionParams($user){
          	<title>Clique</title>
          </head>
          <body>
-         	If you are seeing this text, something has gone terribly, terribly wrong. Omni Finit.
+         	If you are seeing this text, something has gone terribly, terribly wrong with the Facebook login. Please try again or use the sign-up facebook method.
          </body>
          </html>

@@ -25,7 +25,7 @@ include(ROOT_PATH . 'inc/header.php'); ?>
       <div class="large-4 columns">
         <i class="fi-heart"></i>
         <h3> Personal, Not 'Personalized'</h3>
-        <p> So much of our experience of the internet is driven by feeds, news streams created and controlled by "personalization algorithms". Clique is unique because it is built on the idea that your friends, not machines, know you best and can connect you with what inspires and excites you.
+        <p> So much of our experience of the internet is driven by feeds, news streams created and controlled by personalization algorithms. Clique is unique because it is built on the idea that your friends, not machines, know you best and can connect you with what inspires and excites you.
 
         </p>
       </div>

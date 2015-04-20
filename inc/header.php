@@ -106,7 +106,8 @@
 
         $helper = new FacebookRedirectLoginHelper('http://localhost/inc/fbLogin.php');
         $params = array('email','public_profile', 'user_status', 'user_friends');
-        echo '<a href="' . $helper->getLoginUrl($params) . '">Login with Facebook</a>'
+        $loginURL = $helper->getLoginUrl($params);
+        echo '<a href="' . $loginURL . '">Login with Facebook</a>';
 
         ?>  
       </div>
@@ -122,6 +123,15 @@
           Email: <input name="email"> <br>
           <input type="submit" value="Sign up">
         </form>
+      </div>
+      OR <br>
+      <br>
+      <div id="facebookSignUpArea">
+        <?php
+       
+        echo '<a href="' . $loginURL . '">Signup with Facebook</a>';
+
+        ?>  
       </div>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>

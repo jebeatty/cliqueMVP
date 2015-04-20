@@ -84,13 +84,17 @@ body {
 	border-color: white;
 	border-width: 2px;
 	height: 2.3em;
+	font-family: 'Montserrat', sans-serif;
 
 }
 .button.radius.left{
 	margin-left:1px;
+	font-family: 'Montserrat', sans-serif;
 
-	
+}
 
+.button{
+	font-family: 'Montserrat', sans-serif;
 }
 
 #footer{
@@ -108,17 +112,23 @@ body {
 	vertical-align: middle;
 }
 
-#facebookLoginArea>a{
-	background: #3b5998;
-	padding: 10 6 10 6;
-	color: white;
+.panel h4, h3, h2, h1 {
+	font-family: 'Montserrat', sans-serif;
 }
 
-#facebookLoginArea>a:visited{
-	background: #3b5998;
-	padding: 10 6 10 6;
+.tabs .tab-title.active a{
+	background: #61006e;
 	color: white;
-
+	font-family: 'Montserrat', sans-serif;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+.tabs .tab-title > a{
+	background: #81078e;
+	color: white;
+	font-family: 'Montserrat', sans-serif;
+	padding-top: 8px;
+	padding-bottom: 8px;
 }
 /*Feature Content
 ==========================*/

@@ -12,7 +12,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
       <div class="row" id="mainColumn">
         <div class="large-12 columns" id="headline">
           <div class="panel radius" id="headerPanel">
-            <h4> Recommendations for You Today, <?php echo $_SESSION['username'] ?> </p>
+            <h4> Recommendations for You </p>
           </div>
         </div>
         <script>
@@ -64,8 +64,8 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   }
 
                   column1HTML += '</ul>';
-                  column1HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
-                  column1HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+                  column1HTML += '<p class="discussionStats">'+post.commentData.length+' Comments and Y Responses </p>';
+                  column1HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
                   }
                   else{
                   var cleanURL = encodeURI(post.url);
@@ -92,8 +92,8 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   }
 
                   column2HTML += '</ul>';
-                  column2HTML += '<p class="discussionStats">X Comments and Y Responses </p>';
-                  column2HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal2(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+                  column2HTML += '<p class="discussionStats">'+post.commentData.length+' Comments and Y Responses </p>';
+                  column2HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
                   }
                 });
 
@@ -104,7 +104,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
 
               }); //end getJSON
                 
-                
+               
+               
+          
+
+               
+
+
+          
             });//end ready
 
           function submitLike(likeType, postId){
@@ -125,16 +132,18 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
           }
          
 
-          function fillModal2(postId, postURL, posterName){
+          function fillModal(postId, postURL, posterName){
+            console.log('first comment'+comments[0]);
             postURL = decodeURI(postURL);
             var modalHTML = '<p id="modalTitle">Post #'+postId+' was posted by '+posterName+'</p><br>';
             modalHTML += '<a class="embedly-card" href="'+postURL+'" target="_blank"> '+postURL+'</a>';
-
             $('#detailModalContent').html(modalHTML);
             
-            var tab1Content = "<p> Tab 1 test </p>";
-            var tab2Content = "<p> Tab 2 test </p>";
-            $('#panel1').html(tab1Content);
+
+            var commentButtonHTML = '<a class="button postfix" onclick="postComment(&#39;'+postId+'&#39;);"> Post </a>';
+            $('#postCommentButton').html(commentButtonHTML);
+         
+            var tab2Content = "<p> Response Feature is Under Construction... </p>";
             $('#panel2').html(tab2Content);
             
           }
@@ -164,10 +173,43 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
         </ul>
         <div class="tabs-content">
           <div class="content active" id="panel1">
-            <p>This is the first panel of the basic tab example. You can place all sorts of content here including a grid.</p>
+            <div id="commentSection">
+              <p> No comments yet!
+            </div>
+            <div id="addCommentSection">
+                <div class="row">
+                  <div class="large-12 columns">
+                    <div class="row collapse">
+                      <div class="small-10 columns">
+                        <input type="text" id="commentBox" placeholder="Your comment...">
+                      </div>
+                      <div class="small-2 columns" id="postCommentButton">
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <script>
+                function postComment(postId){
+                  var url= '/inc/social.php';
+                  var formData = 'postId='+postId+'&comment='+$('#commentBox').val();
+                  formData+='&action=postComment';
+                  console.log(formData);
+
+                  
+                  $.post(url,formData,function(response){
+                    console.log('Response:' + response);
+                  });
+
+                }
+              //<form method="post" action='/inc/social.php' id="postComment">
+
+
+              </script>
+            </div>
           </div>
           <div class="content" id="panel2">
-            <p>This is the second panel of the basic tab example. This is the second panel of the basic tab example.</p>
+            
           </div>
         </div>
       </div>

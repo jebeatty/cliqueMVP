@@ -27,6 +27,12 @@ function socialActionSelector($action){
 
   	addLikeToPost($postId, $userId, $likeType);
   }
+  else if ($action="postComment") {
+    $comment = $_POST['comment'];
+    $userId=$_SESSION['userId'];
+    $postId = $_POST['postId'];
+    addCommentToPost($postId,$userId,$comment);
+  }
 
 }
 
@@ -86,7 +92,7 @@ function checkIfUserLikedPost($postId, $userId){
 }
 
 function addUserPostRelation($postId, $userId, $likeType){
-	require_once("../inc/config.php");
+	  require_once("../inc/config.php");
   	require(ROOT_PATH."inc/database.php");
 
   	try{
@@ -121,12 +127,39 @@ function getLikesForPost($postId){
 
 //comments
 function getCommentsForPost($postId){
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
 
+    try{
+      $results = $db->prepare("SELECT comment, userId FROM comments WHERE postId=?");
+      $results->execute(array($postId));
+
+    } catch(Exception $e){
+       echo "Comment tabulation data error!";
+       exit;
+    }
+
+    $commentData = $results->fetchAll(PDO::FETCH_ASSOC);
+    return $commentData;
 
 }
 
 function addCommentToPost($postId, $userId, $comment){
 
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+
+    try{
+      $results = $db->prepare("INSERT INTO `comments` (`postId`, `userId`, `comment`) VALUES (?,?,?)");
+      $results->execute(array($postId, $userId, $comment));
+
+    } catch(Exception $e){
+       echo "Comment data insertion error!";
+        exit;
+    }
+
+    echo "comment added";
 
 }
 
