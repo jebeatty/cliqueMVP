@@ -69,6 +69,47 @@ body{
 
 }
 
+/*
+
+Formatting for the custom Embed cards
+*/
+.customEmbedCard{
+	border-left-color: red;
+	text-align: left;
+	border-width: 0;
+	border-color: transparent;
+	margin-bottom: 16px;
+}
+
+.itemHeadline{
+	font-weight: bold;
+}
+
+.objectDesc{
+	font-size: 0.85em;
+	margin-top: 8px;
+	margin-bottom: 6px;
+}
+
+/*
+Comment Formatting
+*/
+
+.commenterName{
+	display: inline;
+	
+}
+
+.comment{
+	display: inline;
+}
+
+.timeStamp{
+	margin-bottom: 10px;
+	font-size: 0.75em;
+	font-style: italic;
+}
+
 .button.radius.right{
 	border-width: 1.5px;
 	height: 2.4em;

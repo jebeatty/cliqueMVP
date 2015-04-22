@@ -24,14 +24,31 @@ function socialActionSelector($action){
   	$likeType = $_GET['likeType'];
   	$postId = $_GET['postId'];
   	$userId = $_SESSION['userId'];
-
   	addLikeToPost($postId, $userId, $likeType);
+
   }
-  else if ($action="postComment") {
+  else if ($action=="postComment") {
     $comment = $_POST['comment'];
     $userId=$_SESSION['userId'];
     $postId = $_POST['postId'];
     addCommentToPost($postId,$userId,$comment);
+
+  }
+  else if ($action=="getComments"){
+    $postId = $_GET['postId'];
+    $json = getCommentsForPost($postId);
+
+    foreach ($json as &$comment) {
+      $userName = getUserNameForId($comment['userId']);
+      $comment['userName'] = $userName;
+    }
+
+    $json = json_encode($json);
+    echo $json;
+
+  }
+  else{
+    echo 'invalid action code!';
   }
 
 }

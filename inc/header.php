@@ -90,7 +90,7 @@
       <div>
         <form method="post" action='/inc/userAuth.php' id="loginForm">
           Username: <input name="username"> <br>
-          Password: <input name="password"> <br>
+          Password: <input type="password" name="password"> <br>
           <input type="submit" value="Login">
         </form>
       </div>
@@ -119,7 +119,7 @@
       <div>
         <form method="post" action='/inc/userAuth.php' id="signupForm">
           Username: <input name="username"> <br>
-          Password: <input name="password"> <br>
+          Password: <input type="password" name="password"> <br>
           Email: <input name="email"> <br>
           <input type="submit" value="Sign up">
         </form>

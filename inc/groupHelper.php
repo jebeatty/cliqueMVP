@@ -124,4 +124,28 @@ function addMember($groupId){
     }
 }
 
+function getUserNameForId($userId){
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+    try{
+      $results = $db->prepare("SELECT userName FROM users WHERE userId=?");
+      $results->execute(array($userId));
+
+    } catch(Exception $e){
+       echo "Like tabulation data error!";
+        exit;
+    }
+
+    $results = $results->fetchAll(PDO::FETCH_ASSOC);
+    if (count($results)>0) {
+      return $results[0]['userName'];
+    }
+    else{
+      return 'Anonymous';
+    }
+
+    
+}
+
 ?>

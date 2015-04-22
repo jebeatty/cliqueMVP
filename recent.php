@@ -29,71 +29,18 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
 
             $(document).ready(function(){
               
-
               $.getJSON('inc/posts.php',{action:"recent"},function(response){
-                
-                console.log(response);
-
                 var column1HTML = '<p>';
                 var column2HTML = '<p>';
 
-
                 $.each(response, function(index, post){
                   var mod = index%2;
+
                   if (mod===1) {
-                  var cleanURL = encodeURI(post.url);
-                  column1HTML += '<div class="panel radius">';
-                  column1HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
-
-                  if (post.comment!='') {
-                    column1HTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
-                  }
-                  
-                  column1HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
-                  column1HTML += '<ul class="button-group round even-3">';
-
-                  if (post.postLiked) {
-                    column1HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
-                    column1HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
-                    column1HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
-
-                  } else{
-                    column1HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
-                    column1HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
-                    column1HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
-                  }
-
-                  column1HTML += '</ul>';
-                  column1HTML += '<p class="discussionStats">'+post.commentData.length+' Comments and Y Responses </p>';
-                  column1HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+                    column1HTML += writeItemHTML(post);
                   }
                   else{
-                  var cleanURL = encodeURI(post.url);
-                  column2HTML += '<div class="panel radius">';
-                  column2HTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
-                  
-                  if (post.comment!='') {
-                    column2HTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
-                  }
-                  
-                  column2HTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
-                  column2HTML += '<ul class="button-group round even-3">';
-
-
-                  if (post.postLiked) {
-                    column2HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
-                    column2HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
-                    column2HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
-
-                  } else{
-                    column2HTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
-                    column2HTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
-                    column2HTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
-                  }
-
-                  column2HTML += '</ul>';
-                  column2HTML += '<p class="discussionStats">'+post.commentData.length+' Comments and Y Responses </p>';
-                  column2HTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+                    column2HTML += writeItemHTML(post);
                   }
                 });
 
@@ -101,18 +48,47 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                 column2HTML += '</p>';
                 $('#leftFeedColumn').html(column1HTML);
                 $('#rightFeedColumn').html(column2HTML);
-
               }); //end getJSON
                 
-               
-               
-          
-
-               
-
-
-          
             });//end ready
+
+          function writeItemHTML(post){
+              var itemHTML = '';
+              var cleanURL = encodeURI(post.url);
+              itemHTML += '<div class="panel radius">';
+              itemHTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
+              
+              if (post.comment!='') {
+                itemHTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
+              }
+              
+              //TO BE REPLACED by oEmbed/embedly api direct call
+              //itemHTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
+              var itemIdTag = "itemId_"+post.postId;
+              itemHTML+='<div id="'+itemIdTag+'"> </div>';
+              callEmbedlyAPIForDiv(itemIdTag,post.url);
+
+
+              //Comments & Social
+              itemHTML += '<ul class="button-group round even-3">';
+
+              if (post.postLiked) {
+                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
+                itemHTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
+                itemHTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
+
+              } else{
+                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
+                itemHTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
+                itemHTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+              }
+
+              itemHTML += '</ul>';
+              itemHTML += '<p class="discussionStats">'+post.commentData.length+' Comments </p>';
+              itemHTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+
+              return itemHTML;
+          }
 
           function submitLike(likeType, postId){
             if (likeType=='ehs'||likeType=='likes'||likeType=='loves') {
@@ -131,21 +107,71 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
             }
           }
          
+         function callEmbedlyAPIForDiv(itemIdTag, postURL){
+          postURL = postURL.replace(/[\n\r]/g, '');
+          $.embedly.defaults.key = '45fd51c22ca84b899138d08c845884d1';
+          
+          $.embedly.oembed(postURL).done(function(results){
+            console.log(postURL);
+            console.log("Data Response:");
+            console.log(results);
+            obj=results[0];
+            var customEmbedHTML = '';
+            customEmbedHTML +='<div class="panel customEmbedCard"><h5 class="itemHeadline"> '+obj.title+' </h5>';
+
+            if (obj.html) {
+              customEmbedHTML +='<div class="flex-video">';
+              customEmbedHTML +=obj.html;
+              customEmbedHTML +='</div>';
+
+            } else if (obj.thumbnail_url) {
+              customEmbedHTML +='<img src="'+obj.thumbnail_url+'">';
+
+            }
+
+            if (obj.description) {
+               customEmbedHTML +='<p class="objectDesc">'+obj.description+'</p>';
+            } else{
+               customEmbedHTML +='<p class="objectDesc">No description! How mysterious...check out the link below to see more</p>';
+            }
+           
+            customEmbedHTML +=' <a href="'+obj.original_url+'" target="_blank"> See more at '+obj.provider_name+' > </a></div>';
+            $('#'+itemIdTag).html(customEmbedHTML);
+          });
+         }
 
           function fillModal(postId, postURL, posterName){
-            console.log('first comment'+comments[0]);
+          
             postURL = decodeURI(postURL);
             var modalHTML = '<p id="modalTitle">Post #'+postId+' was posted by '+posterName+'</p><br>';
             modalHTML += '<a class="embedly-card" href="'+postURL+'" target="_blank"> '+postURL+'</a>';
             $('#detailModalContent').html(modalHTML);
+
+            //comments
+            getCommentsForPost(postId);
             
 
+            //comment button
             var commentButtonHTML = '<a class="button postfix" onclick="postComment(&#39;'+postId+'&#39;);"> Post </a>';
             $('#postCommentButton').html(commentButtonHTML);
-         
-            var tab2Content = "<p> Response Feature is Under Construction... </p>";
-            $('#panel2').html(tab2Content);
-            
+
+          }
+
+          function getCommentsForPost(postId){
+            var commentsHTML = '';
+            $.getJSON('/inc/social.php', {action:"getComments", postId:postId}, function(response){
+                console.log(response);
+
+                
+                $.each(response, function(index, comment){
+                  commentsHTML +='<p class="commenterName"> '+comment.userName+': </p><p class="comment">'+comment.comment+'</p><p class="timeStamp">Timestamp</p>';
+                });
+
+                console.log(commentsHTML);
+                $('#commentSection').html(commentsHTML);
+                
+            });
+
           }
 
           </script>
@@ -166,30 +192,23 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
       <h2 id="modalTitle">Loading...</h2>
       
       </div>
-      <div id="discussionTabs">
-        <ul class="tabs" data-tab>
-          <li class="tab-title active"><a href="#panel1">Comments</a></li>
-          <li class="tab-title"><a href="#panel2">Responses</a></li>
-        </ul>
-        <div class="tabs-content">
-          <div class="content active" id="panel1">
-            <div id="commentSection">
-              <p> No comments yet!
-            </div>
-            <div id="addCommentSection">
-                <div class="row">
-                  <div class="large-12 columns">
-                    <div class="row collapse">
-                      <div class="small-10 columns">
-                        <input type="text" id="commentBox" placeholder="Your comment...">
-                      </div>
-                      <div class="small-2 columns" id="postCommentButton">
-                        
-                      </div>
-                    </div>
-                  </div>
+
+      <div id="commentSection">
+        <p> COMMENTS </p>
+        <p> No comments yet! </p>
+      </div>
+
+      <div id="addCommentSection">
+          <div class="row">
+            <div class="large-12 columns">
+              <div class="row collapse">
+                <div class="small-10 columns">
+                  <input type="text" id="commentBox" placeholder="Your comment...">
                 </div>
-              <script>
+                <div class="small-2 columns" id="postCommentButton">
+                  
+                </div>
+                <script>
                 function postComment(postId){
                   var url= '/inc/social.php';
                   var formData = 'postId='+postId+'&comment='+$('#commentBox').val();
@@ -199,20 +218,17 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                   
                   $.post(url,formData,function(response){
                     console.log('Response:' + response);
+                    getCommentsForPost(postId);
                   });
 
                 }
-              //<form method="post" action='/inc/social.php' id="postComment">
-
-
+              
               </script>
+              </div>
             </div>
           </div>
-          <div class="content" id="panel2">
-            
-          </div>
-        </div>
       </div>
+      
             
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
       

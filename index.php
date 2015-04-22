@@ -2,7 +2,7 @@
 define("CURRENT_PAGE_STYLE","css/index-styles.css");
 
 require_once("inc/config.php");
-include(ROOT_PATH . 'inc/header.php'); ?>
+include('inc/header.php'); ?>
 
 
     <!--Feature Content-->
