@@ -40,3 +40,7 @@ body{
 	background: white;
 }
 
+#modalButtons p{
+	text-align: center;
+}
+

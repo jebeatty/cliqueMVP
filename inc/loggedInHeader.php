@@ -83,6 +83,13 @@
              console.log(response);
               if (response="success") {
                 $('#addGroup').html("<p> Group Created! </p>");
+                //wait
+                //close
+                
+                $('#newGroupModal').foundation('reveal', 'close');
+                var evt = new CustomEvent('groupAdded');
+                window.dispatchEvent(evt);
+                resetGroupModalHTML();
               }
               else{
                 $('#addGroup').html("<p> Something seems to have gone wrong! Please try again later </p>");
@@ -92,6 +99,15 @@
           }); //end post
         }); //end submit
 
+        $.getJSON('inc/invites.php', {action:"getGroupInvites"}, function(response){
+          if (response.length>0) {
+            $('#groupInviteAlert').html('<span class="alert round label"> '+response.length+' </span>');
+          } else{
+            $('#groupInviteAlert').html('');
+          }
+          
+
+        });
           
 
       }); //end ready
@@ -104,6 +120,40 @@
       postModalHTML+='<input type="submit" value="Post!"></form><a class="close-reveal-modal" aria-label="Close">&#215;</a>';
 
       $('#newPostModal').html(postModalHTML);
+    }
+
+    function resetGroupModalHTML(){
+      groupModalHTML = '';
+      groupModalHTML+='<h2 id="newGroupTitle">New Group</h2>';
+      groupModalHTML+='<form method="post" action="/inc/invites.php" id="addGroup"> Group Name: <input name="groupName"> <br><br><br>';
+      groupModalHTML+='Group Description: <textarea name="groupDesc" rows="4" cols="3"> </textarea><br>';
+      groupModalHTML+='<fieldset><legend> Select Friends to Invite:</legend>';
+      groupModalHTML+='<p> Enter a friend&#39;s email to send an invite. If they are not yet a Clique user, ask them to join and they will see the group invite when they signup with the matching email! </p>';
+      groupModalHTML+='<div class="ui-widget"><input placeholder="Enter friend&#39;s email" id="autocomplete" size="30"><p id="warningArea"></p> <button onclick="addFriendToTable(); return false;"> Add Friend to Invite List</button></div>';
+      groupModalHTML+='<div>Invited Friends: <br><ul id="friendZone"></ul></div>';
+      groupModalHTML+='</fieldset><input type="submit" value="Create Group!"></form>';
+      groupModalHTML+='<a class="close-reveal-modal" aria-label="Close">&#215;</a></div>';
+
+
+      $('#newGroupModal').html(groupModalHTML);
+    }
+
+    function addFriendToTable(){
+      var friendEmail = $('#autocomplete').val();
+      if (friendEmail.indexOf('@')>0) {
+        var existingFriends = $('#friendZone').html();
+        var newFriend = '<input type="checkbox" name="members[]" value="'+friendEmail;
+        if (existingFriends.indexOf(newFriend)==-1) {
+          $('#warningArea').html('');
+          $('#friendZone').append(newFriend+'" checked> '+friendEmail+'<br>');
+        }
+        else{
+          $('#warningArea').html('Friend already selected');
+        }
+      } 
+      else{
+        $('#warningArea').html('Invalid Email');
+      }
     }
 
     </script>
@@ -136,7 +186,7 @@
                  <li><a href="recent.php">Recent </a></li>
                  <li><a href="library.php">Library</a></li>
                  <li class="has-dropdown">
-                    <a href="groups.php">Groups </a>
+                    <a href="groups.php">Groups <span id="groupInviteAlert"> </span></a>
                     
                     <script>
                       $.getJSON('inc/posts.php',{action:"getGroupList"},function(response){
@@ -147,8 +197,7 @@
                           modalListHTML += '<input type="checkbox" name="group[]" value="'+group.groupId+'"> '+group.groupName+'<br>';
                         });//end each
 
-                        console.log("Group list html:"+groupListHTML);
-                        console.log("MODAL HTML:"+modalListHTML);
+                      
                         $('#modalGroups').html(modalListHTML);
                         $('#groupMenu').html(groupListHTML);
                       }); //end getJSON
@@ -217,26 +266,7 @@
         <p> Enter a friend's email to send an invite. If they are not yet a Clique user, ask them to join and they will see the group invite when they signup with the matching email! </p>
 
         <div class="ui-widget">
-          <input placeholder="Enter friend's email" id="autocomplete" size="30"><p id="warningArea"></p> <button onclick="addFriendToTable(); return false;"> Add Friend to Group</button>
-          <script>
-          function addFriendToTable(){
-            var friendEmail = $('#autocomplete').val();
-            if (friendEmail.indexOf('@')>0) {
-              var existingFriends = $('#friendZone').html();
-              var newFriend = '<input type="checkbox" name="members[]" value="'+friendEmail;
-              if (existingFriends.indexOf(newFriend)==-1) {
-                $('#warningArea').html('');
-                $('#friendZone').append(newFriend+'" checked> '+friendEmail+'<br>');
-              }
-              else{
-                $('#warningArea').html('Friend already selected');
-              }
-            } 
-            else{
-              $('#warningArea').html('Invalid Email');
-            }
-          }
-          </script>
+          <input placeholder="Enter friend's email" id="autocomplete" size="30"><p id="warningArea"></p> <button onclick="addFriendToTable(); return false;"> Add Friend to Invite List</button>
         </div>
         <div>
           Invited Friends: <br>

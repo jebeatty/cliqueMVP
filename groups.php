@@ -10,6 +10,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
       
     </div>
+    <div class="row"><div class="large-12 columns"><div class="panel"><h2> My Groups </h2></div></div></div>
     <div id="content"> 
      
       
@@ -17,7 +18,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
     <script>
       function getInvites(){
-        console.log("getting invites");
+       
         $.getJSON('inc/invites.php', {action:"getGroupInvites"}, function(response){
 
           
@@ -36,7 +37,6 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
           });// end each
           
           inviteHTML +='</div> </div> ';
-          console.log(inviteHTML);
           $('#invitations').html(inviteHTML);
           } 
         });
@@ -45,9 +45,9 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
       function getGroups(){
         $.getJSON('inc/posts.php',{action:"getAllGroupData"},function(response){
-
+          
             if (response.length>0){
-               var newHTML = ' <div class="row"><div class="large-12 columns"><div class="panel"><h2> My Groups </h2></div></div></div>';
+               var newHTML = '';
                newHTML += '<div class="row">';
                $.each(response, function(index, group){
 
@@ -109,7 +109,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
       function setModalTitle(titleInput, groupId){
       $('#leaveGroupModalTitle').html("Are you sure you'd like to leave "+titleInput+"?");
-      $('#modalButtons').html('<a class="button left" onclick="leaveGroup(&#39;'+groupId+'&#39;); return false;"> Yes, Leave Group </a><a class="button right" onclick="customModalClose();"> No, Never Mind </a>');
+      $('#modalButtons').html('<p><a class="button" onclick="leaveGroup(&#39;'+groupId+'&#39;); return false;"> Yes, Leave Group </a></p><p><a class="button" onclick="customModalClose();"> No, Never Mind </a></p>');
 
       }
 
@@ -122,7 +122,9 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
             getGroups();
             //location.reload();
 
-          } else{
+          } 
+
+          else{
             alert("Something went wrong!");
           }
 
@@ -133,6 +135,11 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
       $(document).ready(function(){
           getInvites();
           getGroups();
+
+          window.addEventListener('groupAdded', function (e) {
+            console.log("group addition detected");
+            getGroups();
+        });
       });//end ready
 
       

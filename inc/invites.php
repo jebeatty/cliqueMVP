@@ -113,15 +113,17 @@ function sendInvites($groupId, $inviterName, $invites){
 	echo $groupId;
 	echo "inviter:";
 	echo $inviterName;
-	foreach ($invites as $userInvite) {
-		$userId=getUserIdForEmail($userInvite);
+  if (count($invites)>0) {
+    foreach ($invites as $userInvite) {
+    $userId=getUserIdForEmail($userInvite);
     if ($userId) {
       inviteUserToGroup($userId,$groupId, $inviterName);
     }
-		else{
+    else{
       createInviteForNonuser($userInvite,$groupId, $inviterName);
     }
-	}
+    }
+  }
 
 	echo "success";
 
@@ -140,9 +142,9 @@ function createInviteForNonuser($userInvite,$groupId, $inviterName){
           echo "User invite data insertion error!";
           exit;
       }
-    }
-
 }
+
+
 
 //accept invites
 function acceptInvite($groupId,$userId){
