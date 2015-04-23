@@ -16,17 +16,6 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
           </div>
         </div>
         <script>
-              (function(w, d){
-              var id='embedly-platform', n = 'script';
-              if (!d.getElementById(id)){
-              w.embedly = w.embedly || function() {(w.embedly.q = w.embedly.q || []).push(arguments);};
-              var e = d.createElement(n); e.id = id; e.async=1;
-              e.src = ('https:' === document.location.protocol ? 'https' : 'http') + '://cdn.embedly.com/widgets/platform.js';
-              var s = d.getElementsByTagName(n)[0];
-              s.parentNode.insertBefore(e, s);
-              }
-              })(window, document);
-
             $(document).ready(function(){
               
               $.getJSON('inc/posts.php',{action:"recent"},function(response){
@@ -51,128 +40,6 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
               }); //end getJSON
                 
             });//end ready
-
-          function writeItemHTML(post){
-              var itemHTML = '';
-              var cleanURL = encodeURI(post.url);
-              itemHTML += '<div class="panel radius">';
-              itemHTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
-              
-              if (post.comment!='') {
-                itemHTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
-              }
-              
-              //oEmbed/embedly api direct call
-              var itemIdTag = "itemId_"+post.postId;
-              itemHTML+='<div id="'+itemIdTag+'"> </div>';
-              callEmbedlyAPIForDiv(itemIdTag,post.url);
-
-
-              //Comments & Social
-              itemHTML += '<ul class="button-group round even-3">';
-
-              if (post.postLiked) {
-                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
-                itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
-                itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
-
-              } else{
-                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
-                itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
-                itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
-              }
-
-              itemHTML += '</ul>';
-              itemHTML += '<p class="discussionStats">'+post.commentData.length+' Comments </p>';
-              itemHTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
-
-              return itemHTML;
-          }
-
-          function submitLike(likeType, postId){
-            if (likeType=='ehs'||likeType=='likes'||likeType=='loves') {
-              
-              $.getJSON('inc/social.php',{action:"submitLike",likeType:likeType, postId:postId},function(response){
-                console.log(response)
-
-                if (response) {
-                  $('#okay'+postId).html(response[0]['ehs']);
-                  $('#like'+postId).html(response[0]['likes']);
-                  $('#love'+postId).html(response[0]['loves']);
-                }
-
-              });
-
-            }
-          }
-         
-         function callEmbedlyAPIForDiv(itemIdTag, postURL){
-          postURL = postURL.replace(/[\n\r]/g, '');
-          $.embedly.defaults.key = '45fd51c22ca84b899138d08c845884d1';
-          
-          $.embedly.oembed(postURL).done(function(results){
-            console.log(postURL);
-            console.log("Data Response:");
-            console.log(results);
-            obj=results[0];
-            var customEmbedHTML = '';
-            customEmbedHTML +='<div class="panel customEmbedCard"><h5 class="itemHeadline"> '+obj.title+' </h5>';
-
-            if (obj.html) {
-              customEmbedHTML +='<div class="flex-video">';
-              customEmbedHTML +=obj.html;
-              customEmbedHTML +='</div>';
-
-            } else if (obj.thumbnail_url) {
-              customEmbedHTML +='<img src="'+obj.thumbnail_url+'">';
-
-            }
-
-            if (obj.description) {
-               customEmbedHTML +='<p class="objectDesc">'+obj.description+'</p>';
-            } else{
-               customEmbedHTML +='<p class="objectDesc">No description! How mysterious...check out the link below to see more</p>';
-            }
-           
-            customEmbedHTML +=' <a href="'+obj.original_url+'" target="_blank"> See more at '+obj.provider_name+' > </a></div>';
-            $('#'+itemIdTag).html(customEmbedHTML);
-          });
-         }
-
-          function fillModal(postId, postURL, posterName){
-          
-            postURL = decodeURI(postURL);
-            var modalItemIdTag = "modalItemId_"+postId;
-            modalHTML='<div id="'+modalItemIdTag+'"> </div>';
-            callEmbedlyAPIForDiv(modalItemIdTag,postURL);
-            $('#detailModalContent').html(modalHTML);
-
-            //comments
-            getCommentsForPost(postId);
-            
-
-            //comment button
-            var commentButtonHTML = '<a class="button postfix" onclick="postComment(&#39;'+postId+'&#39;);"> Post </a>';
-            $('#postCommentButton').html(commentButtonHTML);
-
-          }
-
-          function getCommentsForPost(postId){
-            var commentsHTML = '';
-            $.getJSON('/inc/social.php', {action:"getComments", postId:postId}, function(response){
-                console.log(response);
-
-                
-                $.each(response, function(index, comment){
-                  commentsHTML +='<p class="commenterName"> '+comment.userName+': </p><p class="comment">'+comment.comment+'</p><p class="timeStamp">Timestamp</p>';
-                });
-
-                console.log(commentsHTML);
-                $('#commentSection').html(commentsHTML);
-                
-            });
-
-          }
 
           </script>
 
@@ -250,9 +117,11 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
       '.js><\/script>')
 
   </script>
+  <script src="js/embedDetail.js"></script>
   <script src="js/vendor/modernizr.js"></script>
   <script src="js/foundation.min.js"></script>
   <script>
+
     $(document).foundation();
     $(document).foundation('tab', 'reflow');
   </script>
