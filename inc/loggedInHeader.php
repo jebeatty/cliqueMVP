@@ -50,14 +50,22 @@
             if (response=="success") {
               console.log("Response Successful");
               $('#addPosts').html("<p> Post Successful</p>");
+              var evt = new CustomEvent('itemUpdated');
+              window.dispatchEvent(evt);
+              $('#newPostModal').foundation('reveal', 'close');
+              resetPostModalHTML();
+
             } else{
               console.log("Response unsuccessful");
+              $('#addPosts').html("<p> Uh-oh, something seems to have gone wrong. Please try again later!</p>");
             }
           });
         });
 
         $("#autocomplete").autocomplete({
           source: "inc/search.php",
+          appendTo: "#newGroupModal",
+          delay: 600,
           minLength: 1//search after two characters
          
         });
@@ -74,7 +82,7 @@
              console.log("Invite response:");
              console.log(response);
               if (response="success") {
-                $('#addGroup').html("<p> Posted! </p>");
+                $('#addGroup').html("<p> Group Created! </p>");
               }
               else{
                 $('#addGroup').html("<p> Something seems to have gone wrong! Please try again later </p>");
@@ -87,6 +95,16 @@
           
 
       }); //end ready
+
+    function resetPostModalHTML(){
+      postModalHTML= '<h2 id="newPostTitle">New Post</h2><form method="post" action="/inc/posts.php" id="addPosts">URL: <input name="url"> <br><br><br>';
+      postModalHTML+= 'Comment: <textarea name="message" rows="5" cols="3"></textarea><br><fieldset><legend> Select Groups to Share With:</legend>';
+      postModalHTML+= '<input type="checkbox" name="group[]" value="library"> Post to My Library<br>';
+      postModalHTML+= '<div id="modalGroups"></div></fieldset>';
+      postModalHTML+='<input type="submit" value="Post!"></form><a class="close-reveal-modal" aria-label="Close">&#215;</a>';
+
+      $('#newPostModal').html(postModalHTML);
+    }
 
     </script>
   </head>
@@ -114,7 +132,7 @@
     
          <section class = "top-bar-section"> 
 
-              <ul class = "right">
+              <ul class = "left">
                  <li><a href="recent.php">Recent </a></li>
                  <li><a href="library.php">Library</a></li>
                  <li class="has-dropdown">
@@ -144,14 +162,15 @@
 
         </section>
 
-        <a class="button radius right" data-reveal-id="myModal"> Logout </a>
+        <a class="button radius right logout" data-reveal-id="myModal"> Logout </a>
    
         
         </nav>
 
+        
+      </div>
         <a class="button radius left" data-reveal-id="newPostModal"> New Post </a>
         <a class="button radius left" data-reveal-id="newGroupModal"> New Group </a>
-    </div>
 
     <div id="myModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
       <h2 id="modalTitle">Are you sure?</h2>
@@ -172,7 +191,7 @@
       </textarea><br>
       <fieldset>
         <legend> Select Groups to Share With:</legend>
-        <input type="checkbox" name="group[]" value="library"> Post to My Library
+        <input type="checkbox" name="group[]" value="library"> Save to My Library
         <br>
           <div id="modalGroups">
           </div>
@@ -190,10 +209,13 @@
       <br>
       <br>
       Group Description:
-      <textarea name="groupDesc" rows="6" cols="3">
+      <textarea name="groupDesc" rows="4" cols="3">
       </textarea><br>
+
       <fieldset>
         <legend> Select Friends to Invite:</legend>
+        <p> Enter a friend's email to send an invite. If they are not yet a Clique user, ask them to join and they will see the group invite when they signup with the matching email! </p>
+
         <div class="ui-widget">
           <input placeholder="Enter friend's email" id="autocomplete" size="30"><p id="warningArea"></p> <button onclick="addFriendToTable(); return false;"> Add Friend to Group</button>
           <script>

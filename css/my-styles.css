@@ -14,7 +14,7 @@ nav.top-bar {
 
 section.top-bar-section{
 	display: inline-block;
-	text-align: left;
+	text-align: center;
 	margin-left: -80px;
 }
 
@@ -32,11 +32,12 @@ section.top-bar-section{
 }
 
 
+.top-bar.expanded .title-area{
+	background: #81078e;
+}
 
-nav.top-bar.clearBar{
-	
+.top-bar.clearBar{
 	background: transparent;
-
 }
 
 /* Sticky Footer
@@ -80,7 +81,7 @@ body {
 
 .button.radius.right{
 	margin-right:10px;
-	background: transparent;
+	background: #81078e;
 	border-color: white;
 	border-width: 2px;
 	height: 2.3em;
@@ -90,6 +91,7 @@ body {
 .button.radius.left{
 	margin-left:1px;
 	font-family: 'Montserrat', sans-serif;
+	margin-bottom: 0;
 
 }
 
@@ -234,7 +236,24 @@ a{
 
 @media screen and (max-width: 940px) {
 	nav.top-bar {
+		text-align: center;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	nav.top-bar {
 		text-align: left;
 	}
+
+	.top-bar-section li:not(.has-form) a:not(.button){
+		margin-left: 70px;
+	
+	}
+
+
+	.top-bar-section li:not(.has-form) a:not(.button):hover{
+		margin-left: 70px;
+	}
+
 }
 

@@ -5,7 +5,7 @@
     itemHTML += '<p class="itemTitle"> Recommended by '+post.posterName+'</p>';
     
     if (post.comment!=null) {
-      itemHTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
+      itemHTML += '<p class="posterComment"> '+post.comment+' </p>'
     }
     
     //oEmbed/embedly api direct call
@@ -27,6 +27,36 @@
       itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
       itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
     }
+
+    itemHTML += '</ul>';
+    itemHTML += '<p class="discussionStats">'+post.commentData.length+' Comments </p>';
+    itemHTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+
+    return itemHTML;
+  }
+
+  function writeItemHTMLForLibrary(post){
+    var itemHTML = '';
+    var cleanURL = encodeURI(post.url);
+    itemHTML += '<div class="panel radius">';
+    
+    if (post.comment!=''&& post.comment!=null) {
+      itemHTML += '<p class="posterComment"> '+post.comment+' </p>'
+    }
+    
+    //oEmbed/embedly api direct call
+    var itemIdTag = "itemId_"+post.postId;
+    itemHTML+='<div id="'+itemIdTag+'"> </div>';
+    callEmbedlyAPIForDiv(itemIdTag,post.url);
+
+
+    //Comments & Social
+    itemHTML += '<ul class="button-group round even-3">';
+
+
+    itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.ehs+' Okays</a></li>';
+    itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likes+' Likes</a></li>';
+    itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.loves+' Loves</a></li>';
 
     itemHTML += '</ul>';
     itemHTML += '<p class="discussionStats">'+post.commentData.length+' Comments </p>';

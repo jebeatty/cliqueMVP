@@ -31,6 +31,7 @@ function actionSelector($action){
     echo $json;
   } 
   else if ($action=="getGroupData"){
+    //gets data for display
     $json = json_encode(getGroupData($_GET['groupId']));
     echo $json;
   }
@@ -65,12 +66,13 @@ function addNewPost($groups, $userId, $url, $comment){
                               VALUES (?,?,?,?,?)
                               ");
     $results->execute(array($_SESSION['username'], $userId, $groupId, $url, $comment));
-
+    $insertId = $db->lastInsertId();
     } catch(Exception $e){
         echo "Data loading error!";
         exit;
     }
-  
+    addUserPostRelation($insertId,$userId, 'likes');
+
   } //end each*/
 
   $json=json_encode("success");
@@ -96,7 +98,7 @@ function getRecent($userId){
   }
 
   //create a SQL query with WHERE groupId=? or groupId=?
-  $SQLQuery = "SELECT posterName, groupId, url, postDate, postId, comment FROM posts WHERE ";
+  $SQLQuery = "SELECT posterName, groupId, url, postDate, postId, comment, ehs, likes, loves FROM posts WHERE ";
 
   //a For loop that concatenates groupId=? onto the SQL query, with ORs included except for the last iteration of the loop
 
@@ -128,11 +130,6 @@ function getRecent($userId){
     foreach ($recent as &$recentPost) {
       $postLiked = checkIfUserLikedPost($recentPost['postId'], $userId);
       $recentPost['postLiked']=$postLiked;
-
-      if ($postLiked) {
-        $likeData = getLikesForPost($recentPost['postId']);
-        $recentPost['likeData']=$likeData;
-      }
     }
 
     foreach ($recent as &$recentPost) {
@@ -255,6 +252,21 @@ function getGroupData($groupId, $limit){
     }
 
     return $groupPosts;
+
+}
+
+function addUserPostRelation($postId, $userId, $likeType){
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+    try{
+      $results = $db->prepare("INSERT INTO `userPostRelations` (`postId`, `userId`, `responseType`) VALUES (?,?,?)");
+      $results->execute(array($postId, $userId, $likeType));
+
+    } catch(Exception $e){
+       echo "User-post insertion data error!";
+        exit;
+    }
 
 }
 

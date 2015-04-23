@@ -8,10 +8,12 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
     <!--Feature Content-->
     <div id="groupOptionButtons">
-
+      <br>
 
     </div>
+    <div id="groupDescription" class="panel">
 
+    </div>
     <div id="content">
       
         <script>
@@ -25,24 +27,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
         optionButtonHTML +='<a class="button radius left" data-reveal-id="inviteFriendsModal"> Invite Friends to Group</a>';
         optionButtonHTML +='<a class="button radius left" data-reveal-id="leaveGroupModal" onclick="setModalContent(&#39;'+groupName+'&#39;,&#39;'+groupId+'&#39;);"> Leave Group </a>';
         $('#groupOptionButtons').html(optionButtonHTML);
-				
-        $.getJSON('inc/posts.php',{action:"getGroupData",groupId:groupId},function(response){
-        	console.log("RESPONSE:");
-        	console.log(response);
-          var blockgridHTML = '';
 
-          $.each(response, function(index, post){
-            blockgridHTML += '<li>';
-            blockgridHTML += writeItemHTML(post);
-            blockgridHTML += '</li>';
-            
-          });//end each
+        getGroupMemberInfo(groupId);
+        refreshGroupLibrary(groupId);
 
-          $('#itemGrid').html(blockgridHTML);
-
-        }); //end getJSON
-
-              
+        window.addEventListener('itemUpdated', function (e) {
+                refreshGroupLibrary(groupId);
+        });
+				      
         $('#inviteFriends').submit(function(evt){
         console.log("inviteFriends event detected!");
         evt.preventDefault();
@@ -72,6 +64,44 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
   				return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 			  }
 
+        function refreshGroupLibrary(groupId){
+          $.getJSON('inc/posts.php',{action:"getGroupData",groupId:groupId},function(response){
+          console.log("RESPONSE:");
+          console.log(response);
+          var blockgridHTML = '';
+
+          $.each(response, function(index, post){
+            blockgridHTML += '<li>';
+            blockgridHTML += writeItemHTML(post);
+            blockgridHTML += '</li>';
+            
+          });//end each
+
+          $('#itemGrid').html(blockgridHTML);
+
+          }); //end getJSON
+        }
+
+        function getGroupMemberInfo(groupId){
+          $.getJSON('inc/invites.php',{action:"getGroupInfo",groupId:groupId},function(response){
+          console.log("RESPONSE:");
+          console.log(response);
+          var groupInfoHTML = '';
+
+          groupInfoHTML+= '<h3> '+response[0]['groupName']+' </h3>';
+          groupInfoHTML+= '<p> '+response[0]['groupDesc']+' </p>';
+          groupInfoHTML+= '<p id="memberList"> Members: ';
+          $.each(response[1], function(index,member){
+            groupInfoHTML+=member.userName;
+            if ((index+1)<response[1].length) {
+              groupInfoHTML+=', ';
+            };
+          });
+          groupInfoHTML+= '</p>';
+          $('#groupDescription').html(groupInfoHTML);
+
+          }); //end getJSON
+        }
 
           </script>
        <ul class="large-block-grid-3" id="itemGrid" data-equalizer> 
@@ -155,6 +185,8 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
           $("#inviteAutocomplete").autocomplete({
           source: "inc/search.php",
+          appendTo: "#inviteFriendsModal",
+          delay: 600,
           minLength: 1//search after two characters
          
           });
@@ -237,7 +269,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 
       function customModalClose(){
         $('#leaveGroupModal').foundation('reveal', 'close');
-    }
+      }
 
   </script>
   </body>

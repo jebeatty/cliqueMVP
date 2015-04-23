@@ -33,3 +33,24 @@ body{
 	height: 2.4em;
 }
 
+#groupOptionButtons{
+	margin-bottom: 52px;
+}
+
+#groupDescription p{
+	margin-bottom: 10px;
+}
+
+
+
+@media screen and (max-width: 718px) {
+    #groupOptionButtons{
+	margin-bottom: 104px;
+	}
+}
+
+@media screen and (max-width: 417px) {
+    #groupOptionButtons{
+	margin-bottom: 156px;
+	}
+}

@@ -37,6 +37,18 @@ function actionSelector($action){
 		sendInvites($groupId, $inviterName, $invitedMembers);	
 		
 	}
+  else if($action=="getGroupInfo"){
+    //gets information on members & invites
+    $groupId = $_GET['groupId'];
+
+    $groupInfo=getGroupData($groupId);
+    $memberInfo=getAllMembersForGroup($groupId);
+    array_push($groupInfo, $memberInfo);
+    $json = json_encode($groupInfo);
+    echo $json;
+
+
+  }
 	else if ($action=="getGroupInvites"){
 		queryInvites($_SESSION['userId']);
 
@@ -74,7 +86,7 @@ function actionSelector($action){
 //create groups
 function createGroup($name,$desc,$public,$invites){
 	require_once("../inc/config.php");
-  	require(ROOT_PATH."inc/database.php");
+  require(ROOT_PATH."inc/database.php");
   	
   	if (!$public) {
   		$public=false;
@@ -103,10 +115,32 @@ function sendInvites($groupId, $inviterName, $invites){
 	echo $inviterName;
 	foreach ($invites as $userInvite) {
 		$userId=getUserIdForEmail($userInvite);
-		inviteUserToGroup($userId,$groupId, $inviterName);
+    if ($userId) {
+      inviteUserToGroup($userId,$groupId, $inviterName);
+    }
+		else{
+      createInviteForNonuser($userInvite,$groupId, $inviterName);
+    }
 	}
 
 	echo "success";
+
+}
+
+function createInviteForNonuser($userInvite,$groupId, $inviterName){
+
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+      try {
+      $results = $db->prepare("INSERT INTO `pendingInvites` (`groupId`, `userEmail`, `inviterName`) VALUES (?,?,?)");
+      $results->execute(array($groupId, $userInvite, $inviterName));
+
+      } catch(Exception $e){
+          echo "User invite data insertion error!";
+          exit;
+      }
+    }
 
 }
 
@@ -243,7 +277,7 @@ function addUserToGroup($userId,$groupId, $groupName){
   	if (!$alreadyMember) {
 
 		require_once("../inc/config.php");
-	  	require(ROOT_PATH."inc/database.php");
+	  require(ROOT_PATH."inc/database.php");
 
 		try {
 	    $results = $db->prepare("INSERT INTO `userGroupRelations` (`groupId`, `groupName`,`userId`) VALUES (?,?,?)");
@@ -298,7 +332,7 @@ function getGroupNameForId($groupId){
 
 function getUserIdForEmail($email){
 	require_once("../inc/config.php");
-  	require(ROOT_PATH."inc/database.php");
+  require(ROOT_PATH."inc/database.php");
 
 
 	try {
@@ -311,12 +345,80 @@ function getUserIdForEmail($email){
     }
 
     $userData = $results->fetchAll(PDO::FETCH_ASSOC);
-    return $userData[0]['userId'];
+
+    if (count($userData)>0) {
+      return $userData[0]['userId'];
+    }
+    else{
+      return false;
+    }
+    
 }
 
 
+function getGroupData($groupId){
+  require_once("../inc/config.php");
+  require(ROOT_PATH."inc/database.php");
 
 
+  try {
+    $results = $db->prepare("SELECT groupName, groupDesc FROM groups WHERE groupId=?");
+    $results->execute(array($groupId));
+
+  } catch(Exception $e){
+    echo "Data selection error!";
+    exit;
+  }
+
+  $results = $results->fetchAll(PDO::FETCH_ASSOC);
+  return $results;
+
+}
+
+function getAllMembersForGroup($groupId){
+  require_once("../inc/config.php");
+  require(ROOT_PATH."inc/database.php");
+
+
+  try {
+    $results = $db->prepare("SELECT userId FROM userGroupRelations WHERE groupId = ?");
+    $results->execute(array($groupId));
+
+    } catch(Exception $e){
+        echo "Data selection error!";
+        exit;
+    }
+
+    $results = $results->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($results as &$memberInfo) {
+      $userName = getUserNameForId($memberInfo['userId']);
+      $memberInfo['userName']=$userName;
+    }
+
+    return $results;
+}
+
+function getUserNameForId($userId){
+    require_once("../inc/config.php");
+    require(ROOT_PATH."inc/database.php");
+
+    try{
+      $results = $db->prepare("SELECT userName FROM users WHERE userId=?");
+      $results->execute(array($userId));
+
+    } catch(Exception $e){
+       echo "Like tabulation data error!";
+        exit;
+    }
+
+    $results = $results->fetchAll(PDO::FETCH_ASSOC);
+    if (count($results)>0) {
+      return $results[0]['userName'];
+    }
+    else{
+      return 'Anonymous';
+    }  
+}
 
 
 ?>
