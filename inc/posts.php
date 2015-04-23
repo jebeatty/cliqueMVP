@@ -13,6 +13,8 @@ if (isset($_SESSION['username'])) {
     echo "Invalid session data";
   } 
 
+define("GROUP_POSTS_LIMIT", '3');
+
 function actionSelector($action){
 
   if ($action=="recent") {
@@ -149,7 +151,7 @@ function getLibrary($userId){
   require(ROOT_PATH."inc/database.php");
 
   try {
-    $results = $db->prepare("SELECT groupId, url, postDate
+    $results = $db->prepare("SELECT groupId, url, postDate, postId, ehs, likes, loves, comment
                               FROM posts
                               WHERE posterId=?
                               ORDER BY postId DESC
@@ -163,6 +165,12 @@ function getLibrary($userId){
     }
 
     $library = $results->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($library as &$libraryPost) {
+        $commentData = getCommentsForPost($libraryPost['postId']);
+        $libraryPost['commentData']=$commentData;
+    }
+
     $json = json_encode($library);
     echo $json;
 
@@ -177,7 +185,7 @@ function getGroupDataForUser($userId){
     $groupDataArray = array();
 
     foreach ($groups as $value) {
-    $newGroupData = array($value,getGroupData($value["groupId"]));
+    $newGroupData = array($value,getGroupData($value["groupId"],'3'));
     array_push($groupDataArray, $newGroupData); 
     }
     
@@ -209,17 +217,19 @@ function getGroupListForUser($userId){
     return $groupList;
 }
 
-function getGroupData($groupId){
+function getGroupData($groupId, $limit){
   require_once("../inc/config.php");
   require(ROOT_PATH."inc/database.php");
   
+  if (!$limit) {
+    $limit='15';
+  }
+
+  $query = "SELECT posterName, url, postDate, postId, ehs, likes, loves, comment FROM posts WHERE groupId=".$groupId." ORDER BY postId DESC LIMIT ".$limit;
+
   try {
-    $results = $db->prepare("SELECT posterName, url, postDate
-                              FROM posts
-                              WHERE groupId=? 
-                              ORDER BY postId DESC
-                              ");
-    $results->execute(array($groupId));
+    $results = $db->prepare($query);
+    $results->execute(array());
 
     } catch(Exception $e){
         echo "Data loading error!";
@@ -228,6 +238,21 @@ function getGroupData($groupId){
     }
 
     $groupPosts = $results->fetchAll(PDO::FETCH_ASSOC);
+
+    //check for likes
+    $userId=$_SESSION['userId'];
+
+    foreach ($groupPosts as &$groupItem) {
+      $postLiked = checkIfUserLikedPost($groupItem['postId'], $userId);
+      $groupItem['postLiked']=$postLiked;
+
+    }
+
+    //add comments
+    foreach ($groupPosts as &$groupItem) {
+        $commentData = getCommentsForPost($groupItem['postId']);
+        $groupItem['commentData']=$commentData;
+    }
 
     return $groupPosts;
 

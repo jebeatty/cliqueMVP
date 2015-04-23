@@ -62,8 +62,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                 itemHTML += '<p class="posterComment"> "'+post.comment+'"" </p>'
               }
               
-              //TO BE REPLACED by oEmbed/embedly api direct call
-              //itemHTML += '<a class="embedly-card" href="'+post.url+'" target="_blank"> '+post.url+'</a>';
+              //oEmbed/embedly api direct call
               var itemIdTag = "itemId_"+post.postId;
               itemHTML+='<div id="'+itemIdTag+'"> </div>';
               callEmbedlyAPIForDiv(itemIdTag,post.url);
@@ -73,14 +72,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
               itemHTML += '<ul class="button-group round even-3">';
 
               if (post.postLiked) {
-                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
-                itemHTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
-                itemHTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
+                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['ehs']+' Okays</a></li>';
+                itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['likes']+' Likes</a></li>';
+                itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.likeData[0]['loves']+' Loves</a></li>';
 
               } else{
-                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
-                itemHTML += '<li><a id="like'+post.postId+'" class="button" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
-                itemHTML += '<li><a id="love'+post.postId+'" class="button success" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
+                itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
+                itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
+                itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
               }
 
               itemHTML += '</ul>';
@@ -143,8 +142,9 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
           function fillModal(postId, postURL, posterName){
           
             postURL = decodeURI(postURL);
-            var modalHTML = '<p id="modalTitle">Post #'+postId+' was posted by '+posterName+'</p><br>';
-            modalHTML += '<a class="embedly-card" href="'+postURL+'" target="_blank"> '+postURL+'</a>';
+            var modalItemIdTag = "modalItemId_"+postId;
+            modalHTML='<div id="'+modalItemIdTag+'"> </div>';
+            callEmbedlyAPIForDiv(modalItemIdTag,postURL);
             $('#detailModalContent').html(modalHTML);
 
             //comments
