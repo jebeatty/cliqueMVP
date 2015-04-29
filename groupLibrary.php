@@ -1,8 +1,8 @@
-
 <?php 
-define("CURRENT_PAGE_STYLE","css/library-styles.css");
+session_start();
 
 require_once("inc/config.php");
+define("CURRENT_PAGE_STYLE","css/library-styles.css");
 include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
     
 
@@ -60,7 +60,10 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
 	      function getParameterByName(name) {
   				name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
   				var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+          console.log(regex);
+          console.log(location.search);
   	    		results = regex.exec(location.search);
+            console.log("Parameter("+name+"):"+results);
   				return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 			  }
 
@@ -133,22 +136,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
                 <div class="small-2 columns" id="postCommentButton">
                   
                 </div>
-                <script>
-                function postComment(postId){
-                  var url= '/inc/social.php';
-                  var formData = 'postId='+postId+'&comment='+$('#commentBox').val();
-                  formData+='&action=postComment';
-                  console.log(formData);
-
-                  
-                  $.post(url,formData,function(response){
-                    console.log('Response:' + response);
-                    getCommentsForPost(postId);
-                  });
-
-                }
-              
-              </script>
+                
               </div>
             </div>
           </div>
@@ -173,7 +161,7 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
     </div>
 
 	<div id="inviteFriendsModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-      <form method="post" action='/inc/invites.php' id="inviteFriends">
+      <form method="post" action='inc/invites.php' id="inviteFriends">
       <fieldset>
         <legend> Select Friends to Invite:</legend>
         <div class="ui-widget">
@@ -243,6 +231,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php'); ?>
   <script>
     $(document).foundation();
     $(document).foundation('equalizer','reflow');
+
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-62236049-1', 'auto');
+  ga('send', 'pageview');
 
     function setModalContent(titleInput, groupId){
       $('#leaveGroupModalTitle').html("Are you sure you'd like to leave "+titleInput+"?");

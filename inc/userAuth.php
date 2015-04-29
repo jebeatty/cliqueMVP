@@ -5,34 +5,22 @@
 
 
 session_start();
+require_once("../inc/config.php");
+require(ROOT_PATH."inc/database.php");
+
 $action = $_POST['action'];
 
 
-if ($action=="FBLogin"){
-    FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
-    $helper = new FacebookRedirectLoginHelper('');
-    try {
-        $session = $helper->getSessionFromRedirect();
-       
-        } catch( FacebookRequestException $ex ) {
-          // When Facebook returns an error
-        } catch( Exception $ex ) {
-          // When validation fails or other local issues
-        }
-        if ($session) {
-             $json = json_encode("Initial FB success");
-        echo $json;
-        }
-    
-} else{
     $userName=$_POST['username']; 
     $userName=stripcslashes($userName);
-    $userName=mysql_real_escape_string($userName);
+    $userName=mysqli_real_escape_string($con,$userName);
 
 
     $password=$_POST['password']; 
     $password=stripcslashes($password);
-    $password=mysql_real_escape_string($password);
+    $password=mysqli_real_escape_string($con,$password);
+
+if($userName !='' && $password !=''){
 
     if ($action==="login") {
         logInUser($userName, $password);
@@ -41,8 +29,16 @@ if ($action=="FBLogin"){
     } else if ($action==="signup") {
         $email=$_POST['email']; 
         $email=stripcslashes($email);
-        $email=mysql_real_escape_string($email);
-        signUpUser($userName, $password, $email);
+        $email=mysqli_real_escape_string($con,$email);
+        if($email!=''){
+        	signUpUser($userName, $password, $email);
+        } else{
+        	$json = json_encode("Missing Signup Data");
+       		 echo $json;
+        }
+        
+        
+        
 
     } else if ($action==="logout") {
         session_unset();
@@ -57,9 +53,11 @@ if ($action=="FBLogin"){
         echo $json;
     }
 
+}else{
+	$json = json_encode("Missing Login Data");
+        echo $json;
 
 }
-
 
 
 
@@ -91,7 +89,7 @@ function logInUser($username, $password){
         session_regenerate_id();
     }
     else{
-    	$json = json_encode(false);
+    	$json = json_encode("No such user");
 
     }
     echo $json;

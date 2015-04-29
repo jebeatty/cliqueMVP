@@ -1,5 +1,5 @@
 <?php 
-  session_start();
+  //session_start();
   if (isset($_SESSION['username'])) {
   } else {
     header('Location: index.php');
@@ -10,7 +10,6 @@
   <head>
     <title>Clique</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link href="css/normalize.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link href="css/foundation.css" rel="stylesheet" media="screen">
@@ -20,6 +19,7 @@
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js" type="text/javascript"></script>
+    <script src='//cdn.goroost.com/roostjs/pvneqf9i8wdjrh7yj0pxw000xy3ex3me' async></script>
     <script>
       $(document).ready(function(){
 
@@ -30,7 +30,7 @@
           $.post(url, formData, function(response){
 
             $('#logout').html("<p> Logging out... </p>");
-            location.href="http://localhost//index.php";
+            location.href="index.php";
           
           }); //end post - logout
         }); //end submit - logout
@@ -113,7 +113,7 @@
       }); //end ready
 
     function resetPostModalHTML(){
-      postModalHTML= '<h2 id="newPostTitle">New Post</h2><form method="post" action="/inc/posts.php" id="addPosts">URL: <input name="url"> <br><br><br>';
+      postModalHTML= '<h2 id="newPostTitle">New Post</h2><form method="post" action="inc/posts.php" id="addPosts">URL: <input name="url"> <br><br><br>';
       postModalHTML+= 'Comment: <textarea name="message" rows="5" cols="3"></textarea><br><fieldset><legend> Select Groups to Share With:</legend>';
       postModalHTML+= '<input type="checkbox" name="group[]" value="library"> Post to My Library<br>';
       postModalHTML+= '<div id="modalGroups"></div></fieldset>';
@@ -125,7 +125,7 @@
     function resetGroupModalHTML(){
       groupModalHTML = '';
       groupModalHTML+='<h2 id="newGroupTitle">New Group</h2>';
-      groupModalHTML+='<form method="post" action="/inc/invites.php" id="addGroup"> Group Name: <input name="groupName"> <br><br><br>';
+      groupModalHTML+='<form method="post" action="inc/invites.php" id="addGroup"> Group Name: <input name="groupName"> <br><br><br>';
       groupModalHTML+='Group Description: <textarea name="groupDesc" rows="4" cols="3"> </textarea><br>';
       groupModalHTML+='<fieldset><legend> Select Friends to Invite:</legend>';
       groupModalHTML+='<p> Enter a friend&#39;s email to send an invite. If they are not yet a Clique user, ask them to join and they will see the group invite when they signup with the matching email! </p>';
@@ -169,7 +169,7 @@
           <ul class="title-area">
             <li class = "name"> 
               <h1>
-                <a href="#">Clique</a>
+                <a href="recent.php">Clique</a>
               </h1> 
             </li>
             
@@ -183,8 +183,8 @@
          <section class = "top-bar-section"> 
 
               <ul class = "left">
-                 <li><a href="recent.php">Recent </a></li>
-                 <li><a href="library.php">Library</a></li>
+                 <li><a href="recent.php">Home </a></li>
+                 <li><a href="library.php">Posts</a></li>
                  <li class="has-dropdown">
                     <a href="groups.php">Groups <span id="groupInviteAlert"> </span></a>
                     
@@ -193,7 +193,8 @@
                         groupListHTML ='';
                         modalListHTML ='';
                         $.each(response, function(index, group){
-                          groupListHTML += '<li><a href="groupLibrary.php?groupName='+group.groupName+'&amp;groupId='+group.groupId+'"> '+group.groupName+'</a></li>';
+                          cleanName = group.groupName.replace("#","");
+                          groupListHTML += '<li><a href="groupLibrary.php?groupName='+cleanName+'&amp;groupId='+group.groupId+'"> '+group.groupName+'</a></li>';
                           modalListHTML += '<input type="checkbox" name="group[]" value="'+group.groupId+'"> '+group.groupName+'<br>';
                         });//end each
 
@@ -223,15 +224,15 @@
 
     <div id="myModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
       <h2 id="modalTitle">Are you sure?</h2>
-      <form method="post" action='/inc/userAuth.php' id="logoutForm">
-      <input type="submit" value="Yes, Do it">
+      <form method="post" action='inc/userAuth.php' id="logoutForm">
+      <input class="button radius alert" type="submit" value="Yes, Do it">
       </form>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
 
     <div id="newPostModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
       <h2 id="newPostTitle">New Post</h2>
-      <form method="post" action='/inc/posts.php' id="addPosts">
+      <form method="post" action='inc/posts.php' id="addPosts">
       URL: <input name="url"> <br>
       <br>
       <br>
@@ -246,14 +247,14 @@
           </div>
       </fieldset>
      
-      <input type="submit" value="Post!">
+      <input class="button radius" type="submit" value="Post!">
       </form>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
 
     <div id="newGroupModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
       <h2 id="newGroupTitle">New Group</h2>
-      <form method="post" action='/inc/invites.php' id="addGroup">
+      <form method="post" action='inc/invites.php' id="addGroup">
       Group Name: <input name="groupName"> <br>
       <br>
       <br>
@@ -276,11 +277,10 @@
         </div>
       </fieldset>
      
-      <input type="submit" value="Create Group!">
+      <input class="button radius" type="submit" value="Create Group!">
       </form>
       <a class="close-reveal-modal" aria-label="Close">&#215;</a>
     </div>
-
 
 
 

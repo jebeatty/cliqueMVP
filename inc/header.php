@@ -21,17 +21,23 @@
         $('#loginForm').submit(function(evt){
           evt.preventDefault();
           var url = $(this).attr("action");
+          console.log($(this));
           var formData = $(this).serialize();
           formData+='&action=login';
-
+		console.log(formData);
           $.post(url, formData, function(response){
             console.log(response);
 
             if (response=="true") {
               //$('#loginForm').html("<p> Login succeeded. Welcome <?php echo $_SESSION['username'] ?> </p>");
-              location.href="http://localhost//recent.php";
-            } else{
-              $('#loginForm').html("<p> Login failed. Thanks for trying!</p>");
+              location.href="recent.php";
+              
+            } else if(response=='"No such user"'){
+            	$('#loginModalTitle').html("<p> Invalid login credentials</p>");
+            }else if(response=='"Missing Login Data"'){
+            	$('#loginModalTitle').html('<p class="error">Missing login credentials</p>');
+            }else{
+              $('#loginModalTitle').html("<p> Login failed for unknown reasons. Please try again later</p>");
             };
           
           }); //end post - login
@@ -48,9 +54,11 @@
 
             if (response=="true") {
              // $('#signupForm').html("<p> Signup succeeded! Welcome to Clique, <?php echo $_SESSION['username'] ?> </p>");
-              location.href="http://localhost//recent.php";
-            } else{
-              $('#signupForm').html("<p> Signup failed. Please try again later</p>");
+              location.href="recent.php";
+            } else if(response=='"Missing Login Data"'){
+              $('#signupModalTitle').html("<p> Missing sign up info</p>");
+            }else{
+              $('#signupModalTitle').html("<p> Signup failed. Please try again later</p>");
             };
           
           }); //end post - signup
@@ -86,14 +94,30 @@
     </div>
 
     <div id="loginModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-      <h2 id="modalTitle">Welcome! Please Login</h2>
+      <h3 id="loginModalTitle">Welcome! Please Login</h3>
       <div>
-        <form method="post" action='/inc/userAuth.php' id="loginForm">
-          Username: <input name="username"> <br>
-          Password: <input type="password" name="password"> <br>
-          <input type="submit" value="Login">
-        </form>
+        <form method="post" action='inc/userAuth.php' id="loginForm">
+      	<div class="row">
+
+        	<div class="small-12 columns">
+        		<label> Username
+          		<input type="text" id="nameLabelLI" name="username" placeholder="">
+          		</label>
+        	</div>
+  	</div>
+  	<div class="row">
+  
+        	<div class="small-12 columns">
+        		<label> Password
+          		<input type="password" id="passLabelLI" name="password" placeholder="">
+          		</label>
+        	</div>
+  	</div>
+  	<input type="submit" value="Login" class="button radius">
+	</form>
+     
       </div>
+     
       OR <br>
       <br>
       <div id="facebookLoginArea">
@@ -104,7 +128,7 @@
 
         FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
 
-        $helper = new FacebookRedirectLoginHelper('http://localhost/inc/fbLogin.php');
+        $helper = new FacebookRedirectLoginHelper('http://www.discoverclique.com/doublesecretbeta/inc/fbLogin.php');
         $params = array('email','public_profile', 'user_status', 'user_friends');
         $loginURL = $helper->getLoginUrl($params);
         echo '<a href="' . $loginURL . '">Login with Facebook</a>';
@@ -115,13 +139,34 @@
     </div>
 
     <div id="signupModal" class="reveal-modal small" data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
-      <h2 id="modalTitle">Welcome! Please Sign Up</h2>
+      <h3 id="signupModalTitle">Welcome! Please Sign Up</h3>
       <div>
-        <form method="post" action='/inc/userAuth.php' id="signupForm">
-          Username: <input name="username"> <br>
-          Password: <input type="password" name="password"> <br>
-          Email: <input name="email"> <br>
-          <input type="submit" value="Sign up">
+        <form method="post" action='inc/userAuth.php' id="signupForm">
+          <div class="row">
+
+        	<div class="small-12 columns">
+        		<label> Username
+          		<input type="text" id="nameLabelSU" name="username" placeholder="Jane Doe">
+          		</label>
+        	</div>
+  	</div>
+  	<div class="row">
+
+        	<div class="small-12 columns">
+        		<label> Email
+          		<input type="text" id="emailLabelSU" name="email" placeholder="jane@doe.com">
+          		</label>
+        	</div>
+  	</div>
+  	<div class="row">
+  
+        	<div class="small-12 columns">
+        		<label> Password
+          		<input type="password" id="passLabelSU" name="password" placeholder="">
+          		</label>
+        	</div>
+  	</div>
+  	<input type="submit" value="Sign Up" class="button radius">
         </form>
       </div>
       OR <br>

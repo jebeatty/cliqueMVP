@@ -1,4 +1,5 @@
 <?php 
+session_start();
 define("CURRENT_PAGE_STYLE","css/recent-styles.css");
 
 require_once("inc/config.php");
@@ -76,22 +77,8 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
                 <div class="small-2 columns" id="postCommentButton">
                   
                 </div>
-                <script>
-                function postComment(postId){
-                  var url= '/inc/social.php';
-                  var formData = 'postId='+postId+'&comment='+$('#commentBox').val();
-                  formData+='&action=postComment';
-                  console.log(formData);
-
-                  
-                  $.post(url,formData,function(response){
-                    console.log('Response:' + response);
-                    getCommentsForPost(postId);
-                  });
-
-                }
-              
-              </script>
+                
+                
               </div>
             </div>
           </div>
@@ -125,6 +112,14 @@ include(ROOT_PATH . 'inc/loggedInHeader.php');
 
     $(document).foundation();
     $(document).foundation('tab', 'reflow');
+
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-62236049-1', 'auto');
+  ga('send', 'pageview');
   </script>
   </body>
   

@@ -15,22 +15,20 @@
 
 
     //Comments & Social
-    itemHTML += '<ul class="button-group round even-3">';
+    itemHTML += '<ul class="button-group radius even-2">';
 
     if (post.postLiked) {
-      itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.ehs+' Okays</a></li>';
       itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likes+' Likes</a></li>';
       itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.loves+' Loves</a></li>';
 
     } else{
-      itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">Okay</a></li>';
       itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">Like It</a></li>';
       itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">Love It</a></li>';
     }
 
     itemHTML += '</ul>';
     itemHTML += '<p class="discussionStats">'+post.commentData.length+' Comments </p>';
-    itemHTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+    itemHTML += '<p class="seeDiscussion"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
 
     return itemHTML;
   }
@@ -51,16 +49,14 @@
 
 
     //Comments & Social
-    itemHTML += '<ul class="button-group round even-3">';
+    itemHTML += '<ul class="button-group radius even-2">';
 
-
-    itemHTML += '<li><a id="okay'+post.postId+'" class="button secondary socialButton" onclick="submitLike(&#39;ehs&#39;,&#39;'+post.postId+'&#39;);">'+post.ehs+' Okays</a></li>';
     itemHTML += '<li><a id="like'+post.postId+'" class="button socialButton" onclick="submitLike(&#39;likes&#39;,&#39;'+post.postId+'&#39;);">'+post.likes+' Likes</a></li>';
     itemHTML += '<li><a id="love'+post.postId+'" class="button success socialButton" onclick="submitLike(&#39;loves&#39;,&#39;'+post.postId+'&#39;);">'+post.loves+' Loves</a></li>';
 
     itemHTML += '</ul>';
     itemHTML += '<p class="discussionStats">'+post.commentData.length+' Comments </p>';
-    itemHTML += '<p class="discussionStats"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
+    itemHTML += '<p class="seeDiscussion"><a data-reveal-id="detailModal" onclick="fillModal(&#39;'+post.postId+'&#39;,&#39;'+cleanURL+'&#39;,&#39;'+post.posterName+'&#39;);"> <i class="fi-comments"></i> See Discussion</a></p> </div>';
 
     return itemHTML;
   }
@@ -72,7 +68,6 @@
         console.log(response)
 
         if (response) {
-          $('#okay'+postId).html(response[0]['ehs']+" Okays");
           $('#like'+postId).html(response[0]['likes']+" Likes");
           $('#love'+postId).html(response[0]['loves']+" Loves");
         }
@@ -132,9 +127,23 @@ function fillModal(postId, postURL, posterName){
 
 }
 
+function postComment(postId){
+  var url= 'inc/social.php';
+  var formData = 'postId='+postId+'&comment='+$('#commentBox').val();
+  formData+='&action=postComment';
+  console.log(formData);
+
+  
+  $.post(url,formData,function(response){
+    console.log('Response:' + response);
+    getCommentsForPost(postId);
+  });
+
+}
+                
 function getCommentsForPost(postId){
   var commentsHTML = '';
-  $.getJSON('/inc/social.php', {action:"getComments", postId:postId}, function(response){
+  $.getJSON('inc/social.php', {action:"getComments", postId:postId}, function(response){
       console.log(response);
 
       

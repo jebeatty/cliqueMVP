@@ -23,7 +23,7 @@ $helper = new FacebookRedirectLoginHelper('inc/fbLogin.php');
 echo '<a href="' . $helper->getLoginUrl() . '">Login with Facebook</a>'
 */
 FacebookSession::setDefaultApplication('432912816865715', '8e7e5fc1b821813c0e341b9385d9f3b9');
-$helper = new FacebookRedirectLoginHelper('http://localhost/inc/fbLogin.php');
+$helper = new FacebookRedirectLoginHelper('http://www.discoverclique.com/doublesecretbeta/inc/fbLogin.php');
 try {
     $session = $helper->getSessionFromRedirect();
    

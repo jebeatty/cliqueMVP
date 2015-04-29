@@ -32,7 +32,7 @@ function actionSelector($action){
   } 
   else if ($action=="getGroupData"){
     //gets data for display
-    $json = json_encode(getGroupData($_GET['groupId']));
+    $json = json_encode(getGroupData($_GET['groupId'],'25'));
     echo $json;
   }
   else if($action="newPost"){

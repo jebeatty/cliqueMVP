@@ -32,7 +32,7 @@ include('inc/header.php'); ?>
 
       <div id="secondStop" class="large-4 columns">
         <i class="fi-lightbulb"></i>
-        <h3>Discover Something New</h3>
+        <h3>Discover Something  <br> New</h3>
         <p> The internet is a huge, weird place, but we only see a small part of it. By offering your friends a way to share what they are reading, watching, or enjoying online, Clique provides you a way to explore the nooks and crannies of the internet. Break out of your Facebook bubble and discover something unexpected!
 
         </p>
@@ -47,20 +47,7 @@ include('inc/header.php'); ?>
       <footer id="footer">
           <p> &copy; 2015 Clique </p>
       </footer>
-  
-  <!--Joyride
-  <ol class="joyride-list" data-joyride>
-    <li data-id="firstStop" data-text="Go!" data-options="tipLocation:top; tipAnimation:fade; scrollSpeed:600;"> 
-      <p> Check out these neat features!</p>
-    </li>
-    <li data-id="secondStop" data-text="Next"> 
-      <p> Lorem Ipsum</p>
-    </li>
-    <li data-id="thirdStop" data-button="End"> 
-      <p> Here is our copyright!</p>
-    </li>
-  </ol>
--->
+
     </div>
   <script>
     document.write('<script src=' +
@@ -70,6 +57,15 @@ include('inc/header.php'); ?>
   </script>
   <script src="js/foundation.min.js"></script>
   <script>
+
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-62236049-1', 'auto');
+  ga('send', 'pageview');
+
     $(document).foundation();
     $(document).foundation('joyride','start');
   </script>
